@@ -1,0 +1,9 @@
+name: humannotator
+dependencies:
+  - python=3.7
+  - jupyter
+  - ipykernel
+  - jupyterlab
+  - xlrd
+  - openpyxl
+  - pandas=0.25.0
