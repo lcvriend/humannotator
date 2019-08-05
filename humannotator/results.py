@@ -37,7 +37,7 @@ class Question_MultipleChoice(Question):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if not isinstance(value, Stop) and not value in choices:
+        if not value in self.choices:
             value = Invalid()
         return value
 
