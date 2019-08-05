@@ -1,27 +1,28 @@
 # local
 from humannotator.utils import Base
+from humannotator.annotations import Annotations, Annotation, Invalid
 
 
 class Interface(Base):
+    def __init__(self, annotations):
+        self.annotations = annotations
         self._check_input_('annotations', self.annotations, Annotations)
 
-    def _check_input_(self):
-        if not isinstance(self.answer, Answer):
-            raise TypeError(
-                f"`answer` must be of type {Answer}."
+    def __call__(self, id):
+        annotation = Annotation()
+        while True:
+            instruction = '\n'.join(
+                self.annotations.question.instruction,
+                Stop.instruction
                 )
 
-    def __call__(self):
-        while True:
-            print(f"\n{self.answer.question.instruction}\n{Stop.instruction}\n")
             user = input()
             if user == Stop.character:
-                break
+                return Stop()
 
-            user = self.answer.question(user)
+            user = self.annotations.question(user)
             if not isinstance(user, Invalid):
-                print(f"Annotation is success! Value is {user}")
-                break
+                return annotation(user)
 
 
 class Stop(object):
