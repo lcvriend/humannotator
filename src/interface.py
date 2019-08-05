@@ -25,3 +25,7 @@ class Interface(object):
 
 class Stop(object):
     character = '.'
+
+
+class Invalid(object):
+    pass
