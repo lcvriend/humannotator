@@ -24,5 +24,4 @@ class Interface(object):
 
 
 class Stop(object):
-    def __init__(self, input_string):
-        self.input_string = input_string
+    character = '.'
