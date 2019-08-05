@@ -1,3 +1,6 @@
+# standard library
+import os
+
 # third party
 from IPython.display import HTML, display, clear_output
 
@@ -37,4 +40,7 @@ class Display(Base):
 
     @staticmethod
     def clear():
-        clear_output()
+        if JUPYTER:
+            clear_output()
+        else:
+            os.system('cls||echo -e \\\\033c')
