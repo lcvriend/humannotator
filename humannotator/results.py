@@ -16,10 +16,27 @@ class Question(object):
         return value
 
 
+
 class Question_MultipleChoice(Question):
-    def __init__(self, choices):
-        super().__self__()
+    def __init__(self, choices, **kwargs):
+        super().__init__(**kwargs)
         self.choices = choices
+        self._check_input_()
+
+    def _check_input_(self):
+        if not isinstance(self.choices, dict):
+            raise TypeError(
+                f"`choices` must be of type {dict}."
+                )
+
+    @property
+    def instruction(self):
+        instruction = list()
+        if self._instruction:
+            instruction.append(self._instruction)
+        for choice in self.choices:
+            instruction.append(f"[{choice}] - {self.choices[choice]}")
+        return '\n'.join(instruction)
 
     def __call__(self, value):
         value = super().__call__(value)
