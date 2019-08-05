@@ -15,7 +15,10 @@ class Data(Base):
         self.data = data
         self._check_input_('data', self.data, self.data_type)
         self.ids = None
-        self.elements = None
+        self.elements = data
+
+    def __call__(self, id):
+        return elements[id]
 
 
 class Data_List(Data):
@@ -39,10 +42,16 @@ class Data_Dict(Data):
 class Data_DataFrame(Data):
     data_type = pd.DataFrame
 
-    def __init__(self, data, elements, id='index'):
+    def __init__(self, data, element_col, id_col=None):
         super().__init__(data)
-        self.ids = data.index if id == 'index' else data[id]
-        self.elements = data[elements]
+        if id_col:
+            self.data = self.data.set_index(id_col)
+        self.ids = self.data.index
+        self.element_col = element_col
+        self.elements = self.data[element_col]
+
+    def __call__(self, id):
+        return self.data.at[id, self.element_col]
 
 
 if __name__ == '__main__':
