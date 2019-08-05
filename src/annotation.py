@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Annotator(object):
     Annotation = namedtuple(
-        'Annotation', ['element', 'annotation', 'timestamp']
+        'Annotation', ['id', 'element', 'annotation', 'timestamp']
         )
 
     def __init__(self, annotations=list()):
