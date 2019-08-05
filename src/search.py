@@ -1,3 +1,6 @@
+# standard library
+import re
+
 class Search():
     def __init__(self, name, phrase, data, info=None, n=0):
         self.name = name

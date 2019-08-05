@@ -5,7 +5,7 @@ class Interface(object):
     def __call__(self):
         user = ''
         while user not in ['+', '-', '?', '.']:
-            display(HTML(html))
+            # display(HTML(html))
             user = input(
                 "Please annotate the sample above:\n"
                 "[+] if the sample matches.\n"
@@ -13,7 +13,7 @@ class Interface(object):
                 "[?] when unsure.\n"
                 "[.] to exit (current phrase will NOT be saved).\n"
                 )
-            clear_output()
+            # clear_output()
 
         if user == '.':
             return user
@@ -21,3 +21,8 @@ class Interface(object):
         self.annotations.append(
             self.Annotation(phrase, row.id, user, datetime.now())
             )
+
+
+class Stop(object):
+    def __init__(self, input_string):
+        self.input_string = input_string

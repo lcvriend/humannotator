@@ -1,11 +1,6 @@
 # standard library
-import re
 from collections import namedtuple
 from datetime import datetime
-
-# third party
-import pandas as pd
-from IPython.display import HTML, display, clear_output
 
 
 class Annotator(object):
