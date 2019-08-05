@@ -16,7 +16,7 @@ class Data(object):
     def _check_input_(self):
         if not isinstance(self.data, self.data_type):
             raise TypeError(
-                f"Data must be of type {self.data_type}."
+                f"`data` must be of type {self.data_type}."
                 )
 
 
