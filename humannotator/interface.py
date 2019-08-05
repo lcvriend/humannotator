@@ -1,10 +1,9 @@
-from humannotator.results import Answer, Invalid
+# local
+from humannotator.utils import Base
 
 
-class Interface(object):
-    def __init__(self, answer):
-        self.answer = answer
-        self._check_input_()
+class Interface(Base):
+        self._check_input_('annotations', self.annotations, Annotations)
 
     def _check_input_(self):
         if not isinstance(self.answer, Answer):

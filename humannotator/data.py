@@ -4,21 +4,18 @@ from collections.abc import Iterable
 # third party
 import pandas as pd
 
+# local
+from humannotator.utils import Base
 
-class Data(object):
+
+class Data(Base):
     data_type = Iterable
 
     def __init__(self, data):
         self.data = data
-        self._check_input_()
+        self._check_input_('data', self.data, self.data_type)
         self.ids = None
         self.elements = None
-
-    def _check_input_(self):
-        if not isinstance(self.data, self.data_type):
-            raise TypeError(
-                f"`data` must be of type {self.data_type}."
-                )
 
 
 class Data_List(Data):

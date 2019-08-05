@@ -1,15 +1,14 @@
 # standard library
 from collections import namedtuple
-from datetime import datetime
+
+# local
+from humannotator.utils import Base
 
 
-class Annotator(object):
-    Annotation = namedtuple(
-        'Annotation', ['id', 'element', 'annotation', 'timestamp']
-        )
-
-    def __init__(self, annotations=list()):
+class Annotator(Base):
         self.annotations = annotations
+        self._check_input_('data', self.data, Data)
+        self._check_input_('annotations', self.annotations, Annotations)
 
     @property
     def annotated(self):

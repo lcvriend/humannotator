@@ -1,4 +1,9 @@
-class Question(object):
+
+# local
+from humannotator.utils import Base
+
+
+class Question(Base):
     def __init__(self, instruction=None):
         self._instruction = instruction
 
@@ -18,13 +23,7 @@ class Question_MultipleChoice(Question):
     def __init__(self, choices, **kwargs):
         super().__init__(**kwargs)
         self.choices = choices
-        self._check_input_()
-
-    def _check_input_(self):
-        if not isinstance(self.choices, dict):
-            raise TypeError(
-                f"`choices` must be of type {dict}."
-                )
+        self._check_input_('choices', self.choices, dict)
 
     @property
     def instruction(self):
@@ -42,11 +41,9 @@ class Question_MultipleChoice(Question):
         return value
 
 
-class Answer(object):
-    def __init__(self, question):
+class Annotations(Base):
         self.question = question
-        self._value = None
-        self._check_input_()
+        self._check_input_('question', self.question, Question)
 
     def _check_input_(self):
         if not isinstance(self.question, Question):
