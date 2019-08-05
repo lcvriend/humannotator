@@ -16,7 +16,7 @@ class Annotator(Base):
         self._check_input_('annotations', self.annotations, Annotations)
 
     def __call__(self, ids):
-        interface = Interface(self.annotations)
+        interface = Interface(self.data, self.annotations)
         for id in ids:
             if id in self.annotations.annotations.keys():
                 continue
