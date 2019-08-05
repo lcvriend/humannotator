@@ -1,6 +1,7 @@
 # standard library
 import re
 
+
 class Select():
     def __init__(self, name, phrase, data, info=None, n=0):
         self.name = name

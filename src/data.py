@@ -4,6 +4,7 @@ from collections.abc import Iterable
 # third party
 import pandas as pd
 
+
 class Data(object):
     data_type = Iterable
 

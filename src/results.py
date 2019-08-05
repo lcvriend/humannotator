@@ -1,4 +1,5 @@
-from interface import Invalid, Stop
+# local
+from src.interface import Invalid, Stop
 
 
 class Question(object):
