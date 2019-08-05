@@ -5,7 +5,7 @@ from datetime import datetime
 from humannotator.utils import Base
 
 
-class Question(Base):
+class Task(Base):
     def __init__(self, instruction=None):
         self._instruction = instruction
 
@@ -21,7 +21,7 @@ class Question(Base):
         self._instruction = instruction
 
 
-class Question_MultipleChoice(Question):
+class Task_MultipleChoice(Task):
     def __init__(self, choices, **kwargs):
         super().__init__(**kwargs)
         self.choices = choices
@@ -44,10 +44,10 @@ class Question_MultipleChoice(Question):
 
 
 class Annotations(Base):
-    def __init__(self, question, annotations=None):
-        self.question = question
+    def __init__(self, task, annotations=None):
+        self.task = task
         self.annotations = dict() if annotations is None else annotations
-        self._check_input_('question', self.question, Question)
+        self._check_input_('task', self.task, Task)
 
     def __call__(self, id, annotation):
         self.annotations[id] = annotation
