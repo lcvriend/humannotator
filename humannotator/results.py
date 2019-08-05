@@ -48,3 +48,7 @@ class Answer(object):
     def value(self, value):
         value = self.question(value)
         self._value = value
+
+
+class Invalid(object):
+    pass
