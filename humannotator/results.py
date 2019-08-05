@@ -1,20 +1,17 @@
-# local
-from src.interface import Invalid, Stop
-
-
 class Question(object):
-    def __init__(self, instruction):
-        self.instruction = instruction
+    def __init__(self, instruction=None):
+        self._instruction = instruction
 
     def __call__(self, value):
-        value = _check_stop_(value)
         return value
 
-    def _check_stop_(self, value):
-        if value == Stop.character:
-            return Stop()
-        return value
+    @property
+    def instruction(self):
+        return self._instruction
 
+    @instruction.setter
+    def instruction(self, instruction):
+        self._instruction = instruction
 
 
 class Question_MultipleChoice(Question):
