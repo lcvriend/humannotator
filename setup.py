@@ -14,7 +14,7 @@ setup(
         ],
     keywords='annotation',
     url='http://github.com/lcvriend/humannotator',
-    author='D.E. Kim, L.C. Vriend',
+    author='L.C. Vriend, D.E. Kim',
     author_email='vanboefer@gmail.com',
     license='LGPLv3+',
     packages=['humannotator'],
