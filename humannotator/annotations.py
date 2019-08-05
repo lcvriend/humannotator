@@ -1,3 +1,5 @@
+# standard library
+from datetime import datetime
 
 # local
 from humannotator.utils import Base
@@ -42,23 +44,23 @@ class Question_MultipleChoice(Question):
 
 
 class Annotations(Base):
+    def __init__(self, question, annotations=None):
         self.question = question
+        self.annotations = dict() if annotations is None else annotations
         self._check_input_('question', self.question, Question)
 
-    def _check_input_(self):
-        if not isinstance(self.question, Question):
-            raise TypeError(
-                f"`question` must be of type {Question}."
-                )
+    def __call__(self, id, annotation):
+        self.annotations[id] = annotation
 
-    @property
-    def value(self):
-        return self._value
 
-    @value.setter
-    def value(self, value):
-        value = self.question(value)
-        self._value = value
+class Annotation(object):
+    def __call__(self, value):
+        self.value = value
+        self.timestamp = datetime.now()
+        return self
+
+    def __repr__(self):
+        return f"Annotation(value: {self.value}, timestamp: {self.timestamp})"
 
 
 class Invalid(object):
