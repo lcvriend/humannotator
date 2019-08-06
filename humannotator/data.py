@@ -46,9 +46,9 @@ class Data_DataFrame(Data):
         super().__init__(data)
         if id_col:
             self.data = self.data.set_index(id_col)
-        self.ids = self.data.index
         self.element_col = element_col
-        self.elements = self.data[element_col]
+        self.ids = self.data.index
+        self.elements = self.data[self.element_col]
 
     def __call__(self, id):
         return self.data.at[id, self.element_col]
