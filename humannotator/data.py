@@ -12,6 +12,9 @@ class Data(Base):
     data_type = Iterable
 
     def __init__(self, data):
+        try:
+            self.data = data.copy()
+        except AttributeError:
         self.data = data
         self._check_input_('data', self.data, self.data_type)
         self.ids = None
