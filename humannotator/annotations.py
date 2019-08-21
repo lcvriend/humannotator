@@ -1,4 +1,5 @@
 # standard library
+from collections.abc import Mapping
 from datetime import datetime
 
 # local
@@ -25,7 +26,7 @@ class Task_MultipleChoice(Task):
     def __init__(self, choices, **kwargs):
         super().__init__(**kwargs)
         self.choices = choices
-        self._check_input_('choices', self.choices, dict)
+        self._check_input_('choices', self.choices, Mapping)
 
     @property
     def instruction(self):

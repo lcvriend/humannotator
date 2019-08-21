@@ -1,5 +1,5 @@
 # standard library
-from collections.abc import Iterable
+from collections.abc import Iterable, Collection, Mapping
 
 # third party
 import pandas as pd
@@ -20,9 +20,8 @@ class Data(Base):
     def __call__(self, id):
         return elements[id]
 
-
 class Data_List(Data):
-    data_type = list
+    data_type = Collection
 
     def __init__(self, data):
         super().__init__(data)
@@ -31,7 +30,7 @@ class Data_List(Data):
 
 
 class Data_Dict(Data):
-    data_type = dict
+    data_type = Mapping
 
     def __init__(self, data):
         super().__init__(data)
