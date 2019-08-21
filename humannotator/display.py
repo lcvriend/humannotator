@@ -31,7 +31,7 @@ class Display(Base):
         to_screen = [
             f"id: {id}",
             'element:',
-            f"{self.tab}{self.data(id)}",
+            f"{self.tab}{self.data[id]}",
             self.line,
             self.instruction,
         ]

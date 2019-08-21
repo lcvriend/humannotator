@@ -15,13 +15,11 @@ class Data(Base):
         try:
             self.data = data.copy()
         except AttributeError:
-        self.data = data
+            self.data = data
         self._check_input_('data', self.data, self.data_type)
         self.ids = None
         self.elements = data
 
-    def __call__(self, id):
-        return elements[id]
 
 class Data_List(Data):
     data_type = Collection
@@ -52,7 +50,7 @@ class Data_DataFrame(Data):
         self.ids = self.data.index
         self.elements = self.data[self.element_col]
 
-    def __call__(self, id):
+    def __getitem__(self, id):
         return self.data.at[id, self.element_col]
 
 
