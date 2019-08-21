@@ -49,8 +49,14 @@ class Annotations(Base):
         self.annotations = dict() if annotations is None else annotations
         self._check_input_('task', self.task, Task)
 
-    def __call__(self, id, annotation):
-        self.annotations[id] = annotation
+    def __call__(self):
+        return self.annotations
+
+    def __getitem__(self, id):
+        return self.annotations[id]
+
+    def __setitem__(self, id, value):
+        self.annotations[id] = value
 
 
 class Annotation(object):

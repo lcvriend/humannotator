@@ -24,7 +24,7 @@ class Annotator(Base):
             if isinstance(user, Stop):
                 break
             if isinstance(user, Annotation):
-                self.annotations(id, user)
+                self.annotations[id] = user
         return None
 
     def to_dataframe(self):
