@@ -2,6 +2,7 @@
 import os
 
 # third party
+from markdown import markdown
 from IPython.display import HTML, display, clear_output
 
 # local
@@ -53,7 +54,7 @@ if JUPYTER:
                 annotator=self.annotator,
                 item_id=id,
                 data=self.data[id],
-                instruction=self.instruction,
+                instruction=markdown(self.instruction),
             ).to_html()
             display(HTML(output))
 
