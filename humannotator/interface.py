@@ -16,6 +16,7 @@ class Interface(Base):
     def __call__(self, id):
         annotation = Annotation()
         display = Display(self.data, self.instruction)
+        display.clear()
         while True:
             display(id)
             user = input()
