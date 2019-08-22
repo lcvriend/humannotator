@@ -70,9 +70,11 @@ def get_list(value):
     return value
 
 
-# create easy access to config settings
+# easy access to settings and paths
 cfg = load_ini(CFG_FILE)
 SETTINGS  = get_section(cfg, 'SETTINGS')
-PATHS     = get_section(cfg, 'PATHS', func=lambda x: PATH_LIB / x)
-TEMPLATES = get_section(cfg, 'TEMPLATES', func=lambda x: PATHS.templates / x)
-STYLING   = get_section(cfg, 'STYLING', func=lambda x: PATHS.styles / x)
+PATHS     = get_section(
+    cfg,
+    'PATHS',
+    func=lambda x: PATH_LIB / x[1:] if x.startswith('/') else Path(x)
+)

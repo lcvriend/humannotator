@@ -6,7 +6,7 @@ from pathlib import Path
 from inspect import Parameter, Signature
 
 # local
-from humannotator.display.config import SETTINGS, PATHS, TEMPLATES, STYLING
+from humannotator.display.config import SETTINGS, PATHS
 
 
 TABS = ' ' * SETTINGS.n_tabs
@@ -43,9 +43,10 @@ class Element(metaclass=ElementMeta):
 
 
 def element_factory(cls_name, language=SETTINGS.lang):
-    path       = getattr(TEMPLATES, cls_name.lower())
-    template   = path.read_text()
-    css        = STYLING.css.read_text().strip('\n')
+    path_tmpl  = PATHS.templates / (cls_name.lower() + '.html')
+    path_css   = PATHS.styles / (cls_name.lower() + '.css')
+    template   = path_tmpl.read_text()
+    css        = path_css.read_text().strip('\n')
     api        = ['to_html']
     properties = ['id', 'level', 'css', 'content', 'toc', 'language']
     snippets   = load_templates('snippets', language)
