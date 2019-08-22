@@ -2,6 +2,9 @@
 from collections.abc import Mapping
 from datetime import datetime
 
+# third party
+import pandas as pd
+
 # local
 from humannotator.utils import Base
 
@@ -11,6 +14,7 @@ class Task(Base):
         self._instruction = instruction
 
     def __call__(self, value):
+        "Validate value."
         return value
 
     @property
@@ -58,6 +62,20 @@ class Annotations(Base):
 
     def __setitem__(self, id, value):
         self.annotations[id] = value
+
+    def to_dataframe(self):
+        return pd.DataFrame.from_dict(self.annotations, orient='index')
+
+    @classmethod
+    def from_dataframe(cls, df, task=None):
+        annotations = dict()
+        for tup in df.itertuples():
+            annotations[tup.Index] = Annotation(
+                value=tup.value, timestamp=tup.timestamp
+            )
+        if not task:
+            task = Task()
+        return cls(task, annotations=annotations)
 
 
 class Annotation(Mapping):
