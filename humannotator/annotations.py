@@ -60,14 +60,28 @@ class Annotations(Base):
         self.annotations[id] = value
 
 
-class Annotation(object):
+class Annotation(Mapping):
+    def __init__(self, value=None, timestamp=None):
+        self.value = value
+        self.timestap = timestamp
+
     def __call__(self, value):
         self.value = value
         self.timestamp = datetime.now()
         return self
 
     def __repr__(self):
-        return f"Annotation(value: {self.value}, timestamp: {self.timestamp})"
+        items = ', '.join('{}={!r}'.format(*i) for i in self.__dict__.items())
+        return f"{self.__class__.__name__}({items})"
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __iter__(self):
+        yield from self.__dict__.keys()
+
+    def __len__(self):
+        return len(self.__dict__)
 
 
 class Invalid(object):
