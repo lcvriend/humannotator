@@ -8,7 +8,7 @@ class Interface(Base):
     def __init__(self, annotator):
         self.annotator = annotator
         self.validate = annotator.annotations.task
-        self.instruction = '\n'.join([
+        self.instruction = '  \n'.join([
             self.annotator.annotations.task.instruction,
             Stop.instruction,
             ])
