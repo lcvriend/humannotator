@@ -81,7 +81,7 @@ class Annotations(Base):
 class Annotation(Mapping):
     def __init__(self, value=None, timestamp=None):
         self.value = value
-        self.timestap = timestamp
+        self.timestamp = timestamp
 
     def __call__(self, value):
         self.value = value
