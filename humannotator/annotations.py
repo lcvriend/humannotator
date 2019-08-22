@@ -39,7 +39,7 @@ class Task_MultipleChoice(Task):
             instruction.append(self._instruction)
         for choice in self.choices:
             instruction.append(f"[{choice}] - {self.choices[choice]}")
-        return '\n'.join(instruction)
+        return '  \n'.join(instruction)
 
     def __call__(self, value):
         value = super().__call__(value)
