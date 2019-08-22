@@ -5,17 +5,17 @@ from humannotator.display.display import Display
 
 
 class Interface(Base):
-    def __init__(self, data, annotations):
-        self.data = data
-        self.annotations = annotations
+    def __init__(self, annotator):
+        self.annotator = annotator
+        self.validate = annotator.annotations.task
         self.instruction = '\n'.join([
-            self.annotations.task.instruction,
+            self.annotator.annotations.task.instruction,
             Stop.instruction,
             ])
 
     def __call__(self, id):
         annotation = Annotation()
-        display = Display(self.data, self.instruction)
+        display = Display(self.annotator, self.instruction)
         display.clear()
         while True:
             display(id)
@@ -24,7 +24,7 @@ class Interface(Base):
             if user == Stop.character:
                 return Stop()
 
-            user = self.annotations.task(user)
+            user = self.validate(user)
             if not isinstance(user, Invalid):
                 return annotation(user)
 

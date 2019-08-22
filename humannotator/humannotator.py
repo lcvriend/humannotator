@@ -9,14 +9,15 @@ from humannotator.annotations import Annotations, Annotation
 
 
 class Annotator(Base):
-    def __init__(self, data, annotations):
+    def __init__(self, data, annotations, name='HUMANNOTATOR'):
+        self.name = name
         self.data = data
         self.annotations = annotations
         self._check_input_('data', self.data, Data)
         self._check_input_('annotations', self.annotations, Annotations)
 
     def __call__(self, ids):
-        interface = Interface(self.data, self.annotations)
+        interface = Interface(self)
         for id in ids:
             if id in self.annotations.annotations.keys():
                 continue

@@ -22,12 +22,15 @@ class ProtoDisplay(Base):
     line = '=' * 36
     tab  = ' ' * SETTINGS.n_tabs
 
-    def __init__(self, data, instruction):
-        self.data = data
+    def __init__(self, annotator, instruction):
+        self.annotator = annotator.name
+        self.data = annotator.data
         self.instruction = instruction
 
     def __call__(self, id):
         to_screen = [
+            f"{self.annotator}",
+            self.line,
             f"id: {id}",
             'item:',
             f"{self.tab}{self.data[id]}",
