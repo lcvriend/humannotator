@@ -6,4 +6,5 @@ dependencies:
   - jupyterlab
   - xlrd
   - openpyxl
-  - pandas=0.25.0
+  - pandas>=0.25.0
+  - markdown>=3.1.1
