@@ -6,6 +6,8 @@ from IPython.display import HTML, display, clear_output
 
 # local
 from humannotator.utils import Base
+from humannotator.display.elements import element_factory
+from humannotator.display.config import SETTINGS
 
 
 def test_for_ipython():
@@ -16,12 +18,9 @@ def test_for_ipython():
         return False
 
 
-JUPYTER = test_for_ipython()
-
-
-class Display(Base):
+class ProtoDisplay(Base):
     line = '=' * 36
-    tab  = ' ' * 4
+    tab  = ' ' * SETTINGS.n_tabs
 
     def __init__(self, data, instruction):
         self.data = data
@@ -30,7 +29,7 @@ class Display(Base):
     def __call__(self, id):
         to_screen = [
             f"id: {id}",
-            'element:',
+            'item:',
             f"{self.tab}{self.data[id]}",
             self.line,
             self.instruction,
@@ -38,9 +37,18 @@ class Display(Base):
         output = '\n'.join(to_screen)
         print(output)
 
-    @staticmethod
-    def clear():
-        if JUPYTER:
+
+JUPYTER = test_for_ipython()
+
+
+if JUPYTER:
+    class Display(ProtoDisplay):
+        @staticmethod
+        def clear():
             clear_output()
-        else:
+
+else:
+    class Display(ProtoDisplay):
+        @staticmethod
+        def clear():
             os.system('cls||echo -e \\\\033c')
