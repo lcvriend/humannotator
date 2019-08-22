@@ -1,5 +1,20 @@
-h1 {
+.humannotator h1,
+.humannotator h2,
+.humannotator h3,
+.humannotator p,
+.humannotator code {
+    padding: .25rem;
+}
+.humannotator h1 {
     background: black;
     color: white;
-    padding: .25em;
+}
+.humannotator hr {
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid black;
+}
+.humannotator code {
+    font-size: 0.8em;
+    line-height: 0.75em;
 }
