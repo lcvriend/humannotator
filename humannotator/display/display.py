@@ -45,7 +45,18 @@ JUPYTER = test_for_ipython()
 
 
 if JUPYTER:
+    LayOut = element_factory('basic_layout')
+
     class Display(ProtoDisplay):
+        def __call__(self, id):
+            output = LayOut(
+                annotator=self.annotator,
+                item_id=id,
+                data=self.data[id],
+                instruction=self.instruction,
+            ).to_html()
+            display(HTML(output))
+
         @staticmethod
         def clear():
             clear_output()
