@@ -27,5 +27,28 @@ class Annotator(Base):
                 self.annotations[id] = user
         return None
 
-    def to_dataframe(self):
-        return pd.DataFrame(self.annotations)
+
+if __name__ == '__main__':
+    import sys
+    import pandas as pd
+    from humannotator.data import Data_DataFrame, Data
+    from humannotator.annotations import Task_MultipleChoice, Annotations
+    sys.path.insert(0, '../')
+
+    df = pd.read_csv('examples/news.csv', index_col=0)
+    data = Data_DataFrame(df, items_col='title', id_col='news_id')
+
+    instruction = "Choose one of the following options:"
+    choices={
+        '0': 'not adverse media',
+        '1': 'adverse media',
+        '3': 'exclude from dataset'
+        }
+
+    task = Task_MultipleChoice(instruction=instruction, choices=choices)
+    annotations = Annotations(task)
+    annotator = Annotator(data, annotations)
+
+    annotator(data.ids)
+
+    print(annotator.annotations())
