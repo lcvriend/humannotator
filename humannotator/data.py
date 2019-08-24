@@ -20,6 +20,9 @@ class Data(Base):
         self.ids = None
         self.items = data
 
+    def __len__(self):
+        return len(self.ids)
+
 
 class Data_List(Data):
     data_type = Collection
