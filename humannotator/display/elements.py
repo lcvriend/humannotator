@@ -2,6 +2,7 @@
 import re
 import textwrap
 import uuid
+from copy import deepcopy
 from inspect import Parameter, Signature
 from pathlib import Path
 
@@ -118,6 +119,9 @@ def element_factory(template_filename, language=SETTINGS.lang):
     if 'content' in variables:
         def __call__(self, item):
             "Add item to content"
+            if item is self:
+                item = deepcopy(item)
+                item._content = []
             self._content.append(item)
 
         def _unpack_content(self):
