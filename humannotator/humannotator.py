@@ -9,18 +9,23 @@ from humannotator.annotations import Annotations, Annotation
 
 
 class Annotator(Base):
-    def __init__(self, data, annotations, name='HUMANNOTATOR'):
+    def __init__(self, data, annotations, *args, name='HUMANNOTATOR', **kwargs):
         self.name = name
         self.data = data
         self.annotations = annotations
         self._check_input_('data', self.data, Data)
         self._check_input_('annotations', self.annotations, Annotations)
+        self.args = args
+        self.kwargs = kwargs
 
     def __call__(self, ids):
-        interface = Interface(self)
-        for id in ids:
-            if id in self.annotations.annotations.keys():
-                continue
+        self.ids = [
+            id for id in ids
+            if id not in self.annotations.annotations.keys()
+        ]
+        interface = Interface(self, *self.args, **self.kwargs)
+        for i, id in enumerate(self.ids):
+            self.i = i
             user = interface(id)
             if isinstance(user, Stop):
                 break

@@ -19,51 +19,69 @@ def test_for_ipython():
         return False
 
 
-class ProtoDisplay(Base):
-    line = '=' * 36
-    tab  = ' ' * SETTINGS.n_tabs
-
-    def __init__(self, annotator, instruction):
-        self.annotator = annotator.name
-        self.data = annotator.data
-        self.instruction = instruction
-
-    def __call__(self, id):
-        to_screen = [
-            f"{self.annotator}",
-            self.line,
-            f"id: {id}",
-            'item:',
-            f"{self.tab}{self.data[id]}",
-            self.line,
-            self.instruction,
-        ]
-        output = '\n'.join(to_screen)
-        print(output)
+_Counter = element_factory('_counter.txt')
 
 
 JUPYTER = test_for_ipython()
 
+LayOut_Txt = element_factory('basic_layout.txt')
+def clear():
+    os.system('cls||echo -e \\\\033c')
 
 if JUPYTER:
-    LayOut = element_factory('basic_layout')
+    LayOut_Html = element_factory('basic_layout.html')
+    def clear():
+        clear_output()
 
-    class Display(ProtoDisplay):
-        def __call__(self, id):
-            output = LayOut(
-                annotator=self.annotator,
-                item_id=id,
-                data=self.data[id],
-                instruction=markdown(self.instruction),
-            ).to_html()
-            display(HTML(output))
 
-        @staticmethod
-        def clear():
-            clear_output()
+class ProtoDisplay(Base):
+    def __init__(self, annotator, instruction):
+        self.annotator = annotator
+        self.data = annotator.data
+        self.instruction = instruction
 
-else:
-    class Display(ProtoDisplay):
-        @staticmethod
-        def clear():
-            os.system('cls||echo -e \\\\033c')
+    @property
+    def counter(self):
+        return _Counter(
+            count=self.annotator.i+1,
+            total=len(self.annotator.ids)
+        ).render()
+
+    @staticmethod
+    def clear():
+        clear()
+
+
+class DisplayJupyter(ProtoDisplay):
+    def __call__(self, id):
+        output = LayOut_Html(
+            annotator=self.annotator.name,
+            item_id=id,
+            item=self.data[id],
+            instruction=markdown(self.instruction),
+            counter=self.counter,
+        ).render()
+        display(HTML(output))
+
+
+class DisplayText(ProtoDisplay):
+    def __call__(self, id):
+        n_char = len(max(LayOut_Txt._snippets.values(), key=len))
+        n_lbl  = len(LayOut_Txt._snippets['_lbl_id_'])
+
+        output = LayOut_Txt(
+            annotator=self.annotator.name,
+            item_id=id,
+            item=self.data[id],
+            instruction=self.instruction,
+            counter=f"{self.counter:>{n_char-n_lbl-len(str(id))}}",
+        ).render()
+        print(output)
+
+
+class Display(ProtoDisplay):
+    def __new__(self, *args, text_display=None):
+        if not text_display:
+            if JUPYTER:
+                return DisplayJupyter(*args)
+        return DisplayText(*args)
