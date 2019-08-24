@@ -1,0 +1,7 @@
+[ANNOTATOR]
+[_line_]
+[_lbl_id_][ITEM_ID][COUNTER]
+[_lbl_item_]
+[_tab_][ITEM]
+[_line_]
+[INSTRUCTION]

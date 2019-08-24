@@ -1,20 +1,48 @@
-.humannotator h1,
-.humannotator h2,
-.humannotator h3,
-.humannotator p,
-.humannotator code {
-    padding: .25rem;
+.humannotator {
+    display: grid;
+    grid-template-areas:
+        "name name"
+        "_id_ cntr"
+        "item item"
+        "task task";
 }
-.humannotator h1 {
-    background: black;
+.humannotator div {
+    padding: .25rem .5rem;
+}
+/* GRID AREAS */
+div.humannotator__name {
+    grid-area: name;
+    background-color: black;
     color: white;
+    font-size: 1.5em;
+    font-weight: 600;
 }
-.humannotator hr {
-    margin: 0;
-    border: none;
-    border-bottom: 1px solid black;
+div.humannotator__id {
+    grid-area: _id_;
 }
-.humannotator code {
-    font-size: 0.8em;
-    line-height: 0.75em;
+div.humannotator__cntr {
+    grid-area: cntr;
+    justify-self: end;
+}
+div.humannotator__item {
+    grid-area: item;
+}
+div.humannotator__task {
+    grid-area: task;
+    border-top: 1px solid black;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: .9em;
+}
+/* GENERAL */
+div.humannotator__container {
+    display: flex;
+}
+div.humannotator__label {
+    width: 32px;
+    font-size: .8em;
+    margin-right: 1em;
+}
+div.humannotator__label,
+div.humannotator__value {
+    padding: 0;
 }
