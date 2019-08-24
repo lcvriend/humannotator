@@ -47,15 +47,16 @@ def get_section(ini, section, func=None):
 
 
 def parse_value(value):
-    value = value.strip('\n')
-    if value.isdecimal():
-        return int(value)
-    if value.isnumeric():
-        return float(value)
+    value = value.strip('\n ')
+    try: return int(value)
+    except ValueError: pass
+    try: return float(value)
+    except ValueError: pass
+
     if value[:1] == QUOTECHAR and value[-1:] == QUOTECHAR:
         return value.strip(QUOTECHAR)
-    if any(item in value for item in SEPARATORS):
-        return get_list(value)
+    if value[:1] == '[' and value[-1:] == ']':
+        return get_list(value[1:-1])
     if any(item == value.lower() for item in BOOLEAN_STATES):
         return BOOLEAN_STATES[value.lower()]
     return value
@@ -64,7 +65,7 @@ def parse_value(value):
 def get_list(value):
     for sep in SEPARATORS:
         value = value.strip('\n').replace(sep, ',')
-    lst = [i.strip() for i in value.split(',') if i is not '']
+    lst = [i.strip() for i in value.split(',') if i.strip() is not '']
     if len(lst) > 1:
         return lst
     return value
