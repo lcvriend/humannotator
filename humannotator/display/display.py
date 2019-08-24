@@ -19,17 +19,14 @@ def test_for_ipython():
         return False
 
 
-_Counter = element_factory('_counter.txt')
-
-
-JUPYTER = test_for_ipython()
-
-LayOut_Txt = element_factory('basic_layout.txt')
+_Counter = element_factory(template_filename='_counter.txt')
+LayOut_Txt = element_factory(template_filename='basic_layout.txt')
 def clear():
     os.system('cls||echo -e \\\\033c')
 
+JUPYTER = test_for_ipython()
 if JUPYTER:
-    LayOut_Html = element_factory('basic_layout.html')
+    LayOut_Html = element_factory(template_filename='basic_layout.html')
     def clear():
         clear_output()
 
