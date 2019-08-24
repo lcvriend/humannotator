@@ -50,17 +50,30 @@ class Element(metaclass=ElementMeta):
             setattr(self, name, val)
 
 
-def element_factory(template_filename, language=SETTINGS.lang):
-    path_tmpl  = PATHS.templates / template_filename
-    cls_name   = path_tmpl.stem.capitalize()
-    template   = path_tmpl.read_text()
+def element_factory(
+    template_filename=None,
+    template_string=None,
+    cls_name=None,
+    language=SETTINGS.lang
+):
+    if template_filename:
+        path_tmpl = PATHS.templates / template_filename
+        type_tmpl = path_tmpl.suffix
+        cls_name  = path_tmpl.stem.capitalize()
+        template  = path_tmpl.read_text()
+    elif template_string:
+        template  = template_string
+        type_tmpl = '.txt'
+        cls_name  = cls_name
+    else:
+        raise ValueError(
+            "Arguments missing:"
+            "use either `template_filename` or `template_string`."
+        )
+
     api        = ['render']
     properties = ['id', 'level', 'css', 'content', 'language']
-    snippets   = load_building_blocks(
-        'snippets',
-        path_tmpl.suffix,
-        language=language
-    )
+    snippets   = load_building_blocks('snippets', type_tmpl, language=language)
     variables  = {var.lower() for var in re.findall(SETTINGS.regex, template)}
 
     _fields = tuple(
@@ -73,7 +86,7 @@ def element_factory(template_filename, language=SETTINGS.lang):
         super(self.__class__, self).__init__(*args, **kwargs)
         attrs = {
             'id': f"{self.__class__.__name__.lower()}_{str(uuid.uuid4())[-5:]}",
-            'template_type': path_tmpl.suffix,
+            'template_type': type_tmpl,
             'language': language,
             'level': 1,
         }
