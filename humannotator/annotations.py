@@ -1,6 +1,5 @@
 # standard library
 from collections.abc import Mapping
-from datetime import datetime
 
 # third party
 import pandas as pd
@@ -85,7 +84,7 @@ class Annotation(Mapping, Base):
 
     def __call__(self, value):
         self.value = value
-        self.timestamp = datetime.now()
+        self.timestamp = pd.Timestamp('now')
         return self
 
     def __getitem__(self, key):
