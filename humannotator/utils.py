@@ -5,3 +5,7 @@ class Base(object):
             raise TypeError(
                 f"`{name}` must be of type {cls.__name__}."
                 )
+
+    def __repr__(self):
+        items = (f"{i.strip('_')}={vars(self)[i]!r}" for i in vars(self))
+        return f"{self.__class__.__name__}({', '.join(items)})"

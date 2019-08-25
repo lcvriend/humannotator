@@ -78,7 +78,7 @@ class Annotations(Base):
         return cls(task, annotations=annotations)
 
 
-class Annotation(Mapping):
+class Annotation(Mapping, Base):
     def __init__(self, value=None, timestamp=None):
         self.value = value
         self.timestamp = timestamp
@@ -87,10 +87,6 @@ class Annotation(Mapping):
         self.value = value
         self.timestamp = datetime.now()
         return self
-
-    def __repr__(self):
-        items = ', '.join('{}={!r}'.format(*i) for i in self.__dict__.items())
-        return f"{self.__class__.__name__}({items})"
 
     def __getitem__(self, key):
         return self.__dict__[key]
