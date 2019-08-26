@@ -1,35 +1,82 @@
 # standard library
 import sys
 sys.path.insert(0, '../humannotator')
-
 import unittest
 
+# third party
+import pandas as pd
+
 # local
-from humannotator.annotations import Annotations
+from humannotator.core.tasks import Task
+from humannotator.core.annotations import (
+    Datum,
+    Annotation,
+    Annotations
+)
+
+
+class DatumTestCase(unittest.TestCase):
+    def test_add_attribute(self):
+        datum = Datum()
+        self.assertRaises(AttributeError, setattr, datum, 'c', 1)
+
+
+class AnnotationTestCase(unittest.TestCase):
+    def setUp(self):
+        self.task_a = Task('a')
+        self.task_b = Task('b')
+        self.task_c = Task('c')
+        self.annotation = Annotation([self.task_a, self.task_b])
+
+    def test_set_and_get_from_valid_dict(self):
+        dct = {
+            self.task_a: Annotation('a'),
+            self.task_b: Annotation('b'),
+        }
+        self.annotation['id_1'] = dct
+        self.assertTrue(self.annotations(), dct)
+
+    def test_set_and_get_from_invalid_dict(self):
+        tests = [{
+                self.task_a: Annotation('a'),
+            },
+            {
+                self.task_a: Annotation('a'),
+                self.task_b: Annotation('b'),
+                self.task_c: Annotation('c'),
+            },
+        ]
+
+        for i in tests:
+            with self.subTest(i=i):
+                self.assertRaises(
+                    ValueError,
+                    self.annotations.__setitem__,
+                    'id_1',
+                    i,
+                )
+
+    def test_set_and_get_from_list(self):
+        lst = [
+            Annotation('a'),
+            Annotation('b'),
+        ]
+        self.annotations['id_1'] = lst
+        self.assertTrue(self.annotations(), lst)
 
 
 class AnnotationsTestCase(unittest.TestCase):
     def setUp(self):
-        dct = {
-            'timestamp': {
-                'a': Timestamp('2019-08-25 02:17:33.106594'),
-                'b': Timestamp('2019-08-25 02:17:33.831085'),
-                'c': Timestamp('2019-08-25 02:17:34.598477'),
-                'd': Timestamp('2019-08-25 02:17:35.310781'),
-                'e': Timestamp('2019-08-25 02:17:36.055024'),
-                'f': Timestamp('2019-08-25 02:17:36.687190'),
-            },
-            'value': {
-                'a': '0',
-                'b': '0',
-                'c': '1',
-                'd': '1',
-                'e': '3',
-                'f': '3',
-            }
-        }
-        df = pd.DataFrame.from_dict(dct)
-        self.annotations = Annotations.from_dataframe(df)
+        self.task_a = Task('a')
+        self.task_b = Task('b')
+        self.task_c = Task('c')
+        self.annotations = Annotations([self.task_a, self.task_b])
 
     def tearDown(self):
-        pass
+        del self.task_a
+        del self.task_b
+        del self.annotations
+
+
+if __name__ == '__main__':
+    unittest.main()

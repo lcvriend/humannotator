@@ -3,9 +3,9 @@ from collections import namedtuple
 
 # local
 from humannotator.utils import Base
-from humannotator.data import Data
+from humannotator.data.data import Data
 from humannotator.interface import Interface, Stop
-from humannotator.annotations import Annotations, Annotation
+from humannotator.core.annotations import Annotations, Annotation
 
 
 class Annotator(Base):
@@ -13,8 +13,8 @@ class Annotator(Base):
         self.name = name
         self.data = data
         self.annotations = annotations
-        self._check_input_('data', self.data, Data)
-        self._check_input_('annotations', self.annotations, Annotations)
+        self._check_input('data', self.data, Data)
+        self._check_input('annotations', self.annotations, Annotations)
         self.args = args
         self.kwargs = kwargs
 
@@ -37,8 +37,8 @@ class Annotator(Base):
 if __name__ == '__main__':
     import sys
     import pandas as pd
-    from humannotator.data import Data_DataFrame, Data
-    from humannotator.annotations import Task_MultipleChoice, Annotations
+    from humannotator.data.data import Data_DataFrame, Data
+    from humannotator.core.annotations import Task_MultipleChoice, Annotations
     sys.path.insert(0, '../')
 
     df = pd.read_csv('examples/news.csv', index_col=0)

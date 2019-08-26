@@ -1,6 +1,6 @@
 # local
 from humannotator.utils import Base
-from humannotator.annotations import Annotations, Annotation, Invalid
+from humannotator.annotation.annotations import Annotations, Annotation, Invalid
 from humannotator.display.display import Display
 
 
