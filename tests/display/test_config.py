@@ -1,12 +1,15 @@
 # standard library
 import sys
 sys.path.insert(0, '../humannotator')
-
 import unittest
 
 # local
-from humannotator.display.config import parse_value
-from humannotator.display.config import QUOTECHAR, SEPARATORS, BOOLEAN_STATES
+from humannotator.display.config import (
+    QUOTECHAR,
+    SEPARATORS,
+    BOOLEAN_STATES,
+    parse_value,
+)
 
 
 class ParseValueTestCase(unittest.TestCase):
