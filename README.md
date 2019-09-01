@@ -1,10 +1,9 @@
-Humannotator
-------------
+# Humannotator
 
-Library for creating annotators for your data.
+Library for creating annotators for your data.  
 Works well with Jupyter notebooks.
 
-### Create a simple annotator
+## Create a simple annotator
 
 1. Load the data
 2. Define the tasks
@@ -24,23 +23,28 @@ Works well with Jupyter notebooks.
     }
     instruct = "What is the topic in the title?"
     task1 = task_factory(choices, 'Adverse media')
-    task2 = task_factory('str', 'Topic', instruction=instruct, nullable=True) 
+    task2 = task_factory(
+        'str',
+        'Topic',
+        instruction=instruct,
+        nullable=True
+    )
 
     annotator = Annotator(df[cols], [task1, task2])
 ```
 
-### Annotate your data
+## Annotate your data
 
 - Use the annotator by calling it: `annotator()`.
 - The annotator keeps track of where you were.
 
-### Access your annotations
+## Access your annotations
 
 - Access the annotations with the `annotated` attribute.
 - Return merged data and annotations with the `merged` method.
 - The annotations are conveniently stored in a pandas `DataFrame`.
 
-### Store your annotations
+## Store your annotations
 
 - Store the annotator with the `save` method.
 - Load the annotator with the `load` method.
