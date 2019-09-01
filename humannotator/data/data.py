@@ -49,19 +49,19 @@ class Data_Dict(Data):
 class Data_DataFrame(Data):
     kind = pd.DataFrame
 
-    def __init__(self, data, items_cols=None, id_col=None):
+    def __init__(self, data, item_cols=None, id_col=None):
         super().__init__(data)
         if id_col:
             self.data = self.data.set_index(id_col)
-        if not items_cols:
-            items_cols = data.columns
-        elif not isinstance(items_cols, list):
-            items_cols = [items_cols]
-        self.items_cols = items_cols
+        if not item_cols:
+            item_cols = data.columns
+        elif not isinstance(item_cols, list):
+            item_cols = [item_cols]
+        self.item_cols = item_cols
         self.ids = self.data.index
 
     def __getitem__(self, id):
-        return self.data.loc[id, self.items_cols]
+        return self.data.loc[id, self.item_cols]
 
 
 def load_data(data, **kwargs):
