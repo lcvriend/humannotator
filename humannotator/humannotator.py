@@ -1,5 +1,5 @@
 # standard library
-from collections import namedtuple
+import pickle
 
 # third party
 import pandas as pd
@@ -27,7 +27,9 @@ class Annotator(Base):
         else:
             self.data = data
 
-    def __call__(self, ids):
+    def __call__(self, ids=None):
+        if not ids:
+            ids = self.data.ids
         self.ids = [
             id for id in ids
             if id not in self.annotations.data.index
@@ -41,7 +43,25 @@ class Annotator(Base):
             self.annotations[id] = user
         return None
 
+    @property
+    def annotated(self):
+        return self.annotations.data
 
+    def merged(self, prefix=''):
+        return self.data.data.merge(
+            self.annotated.add_prefix(prefix),
+            left_index=True,
+            right_index=True
+        )
+
+    def save(self, filename):
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load(filename):
+        with open(filename, 'rb') as f:
+            return pickle.load(f)
 
 
 if __name__ == '__main__':
@@ -51,7 +71,7 @@ if __name__ == '__main__':
     sys.path.insert(0, '../')
 
     df = pd.read_csv('examples/news.csv', index_col=0)
-    data = load_data(df, items_cols=['title', 'date'], id_col='news_id')
+    data = load_data(df, item_cols=['title', 'date'], id_col='news_id')
 
     instruction = "Choose one of the following options:"
     choices={
