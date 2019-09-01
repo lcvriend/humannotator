@@ -35,7 +35,10 @@ class Task(Base):
     def __init__(self, name, *args, instruction=None, nullable=False, **kwargs):
         self.name = name
         self.nullable = nullable
-        self._instruction = instruction + '  \n'
+        if not instruction:
+            self._instruction = instruction
+        else:
+            self._instruction = instruction + '  \n'
 
     @property
     def instruction(self):
@@ -157,7 +160,7 @@ class Task_category(Task):
         if not isinstance(categories, Mapping):
             categories = {str(i):c for i, c in enumerate(categories, start=1)}
         self.categories = categories
-        self.dtype = CategoricalDtype(self.categories.values())
+        self.dtype = CategoricalDtype(self.categories.values(), ordered=None)
         items = ''.join(option(i,c) for i, c in categories.items())
         if self._instruction:
             self._instruction = self._instruction + items
