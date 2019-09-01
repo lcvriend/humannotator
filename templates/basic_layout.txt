@@ -1,7 +1,9 @@
 [ANNOTATOR]
 [_line_]
-[_lbl_id_][ITEM_ID][COUNTER]
-[_lbl_item_]
-[_tab_][ITEM]
+[_lbl_id_]:[ITEM_ID][INDEX_COUNT]
+[_lbl_item_]:
+[CONTENT]
 [_line_]
-[INSTRUCTION]
+Task [TASK_COUNT]
+[TASK_NAME] ([TASK_TYPE])
+[INSTRUCTION][ERROR]

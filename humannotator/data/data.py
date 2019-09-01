@@ -1,5 +1,5 @@
 # standard library
-from collections.abc import Iterable, Collection, Mapping
+from collections.abc import Sequence, Mapping
 
 # third party
 import pandas as pd
@@ -8,24 +8,26 @@ import pandas as pd
 from humannotator.utils import Base
 
 
-class Data(Base):
-    data_type = Iterable
+registry = {}
+def register(cls):
+    registry[cls.kind] = cls
+    return cls
 
+
+class Data(Base):
     def __init__(self, data):
         try:
             self.data = data.copy()
         except AttributeError:
             self.data = data
-        self._check_input('data', self.data, self.data_type)
-        self.ids = None
-        self.items = data
 
     def __len__(self):
         return len(self.ids)
 
 
+@register
 class Data_List(Data):
-    data_type = Collection
+    kind = Sequence
 
     def __init__(self, data):
         super().__init__(data)
@@ -33,8 +35,9 @@ class Data_List(Data):
         self.items = data
 
 
+@register
 class Data_Dict(Data):
-    data_type = Mapping
+    kind = Mapping
 
     def __init__(self, data):
         super().__init__(data)
@@ -42,19 +45,29 @@ class Data_Dict(Data):
         self.items = data.values()
 
 
+@register
 class Data_DataFrame(Data):
-    data_type = pd.DataFrame
+    kind = pd.DataFrame
 
-    def __init__(self, data, items_col, id_col=None):
+    def __init__(self, data, items_cols=None, id_col=None):
         super().__init__(data)
         if id_col:
             self.data = self.data.set_index(id_col)
-        self.items_col = items_col
+        if not items_cols:
+            items_cols = data.columns
+        elif not isinstance(items_cols, list):
+            items_cols = [items_cols]
+        self.items_cols = items_cols
         self.ids = self.data.index
-        self.items = self.data[self.items_col]
 
     def __getitem__(self, id):
-        return self.data.at[id, self.items_col]
+        return self.data.loc[id, self.items_cols]
+
+
+def load_data(data, **kwargs):
+    for cls in registry.values():
+        if isinstance(data, cls.kind):
+            return cls(data, **kwargs)
 
 
 if __name__ == '__main__':

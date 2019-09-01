@@ -4,7 +4,7 @@ sys.path.insert(0, '../humannotator')
 import unittest
 
 # local
-from humannotator.display.config import (
+from humannotator.config import (
     QUOTECHAR,
     SEPARATORS,
     BOOLEAN_STATES,

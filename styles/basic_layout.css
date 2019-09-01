@@ -2,12 +2,10 @@
     display: grid;
     grid-template-areas:
         "name name"
-        "_id_ cntr"
+        "_id_ _idx"
         "item item"
-        "task task";
-}
-.humannotator div {
-    padding: .25rem .5rem;
+        "task _tsk"
+        "err_ err_";
 }
 /* GRID AREAS */
 div.humannotator__name {
@@ -20,29 +18,52 @@ div.humannotator__name {
 div.humannotator__id {
     grid-area: _id_;
 }
-div.humannotator__cntr {
-    grid-area: cntr;
+div.humannotator__idx__counter {
+    grid-area: _idx;
     justify-self: end;
 }
 div.humannotator__item {
     grid-area: item;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
 }
 div.humannotator__task {
     grid-area: task;
-    border-top: 1px solid black;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: .9em;
+}
+div.humannotator__task__counter {
+    grid-area: _tsk;
+    justify-self: end;
+}
+div.humannotator__error {
+    grid-area: err_;
+    font-style: italic;
+    color: red;
 }
 /* GENERAL */
+div.humannotator__name,
+div.humannotator__id,
+div.humannotator__idx__counter,
+div.humannotator__item,
+div.humannotator__task,
+div.humannotator__task__counter,
+div.humannotator__error {
+    padding: .25rem .5rem;
+}
 div.humannotator__container {
     display: flex;
 }
 div.humannotator__label {
-    width: 32px;
+    min-width: 8em;
     font-size: .8em;
     margin-right: 1em;
 }
-div.humannotator__label,
-div.humannotator__value {
-    padding: 0;
+div.humannotator__task__format {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: .9em;
+}
+div.humannotator__task__name {
+    font-size: 1.2em;
+    margin-bottom: .25rem;
 }

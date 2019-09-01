@@ -4,15 +4,17 @@ from collections import namedtuple
 from pathlib import Path
 
 
-PATH_LIB = Path(__file__).resolve().parent.parent.parent
-CFG_FILE = PATH_LIB / 'elements.ini'
+PATH_LIB = Path(__file__).resolve().parent.parent
+CFG_FILE  = PATH_LIB / 'config.ini'
 encoding = 'utf-8' # encoding of ini file only
 
 QUOTECHAR = '"'
 SEPARATORS = ['\n', '\t', ',', ';']
 BOOLEAN_STATES = {
-    'yes':  True, 'no':    False,
     'true': True, 'false': False,
+    't':    True, 'f':     False,
+    '1':    True, '0':     False,
+    'yes':  True, 'no':    False,
     'on':   True, 'off':   False,
 }
 
@@ -72,10 +74,11 @@ def get_list(value):
 
 
 # easy access to settings and paths
-cfg = load_ini(CFG_FILE)
-SETTINGS  = get_section(cfg, 'SETTINGS')
+config = load_ini(CFG_FILE)
+KEYS      = get_section(config, 'KEYS')
+ELEMENTS  = get_section(config, 'ELEMENTS')
 PATHS     = get_section(
-    cfg,
+    config,
     'PATHS',
     func=lambda x: PATH_LIB / x[1:] if x.startswith('/') else Path(x)
 )

@@ -5,7 +5,7 @@ sys.path.insert(0, '../humannotator')
 import unittest
 
 # local
-from humannotator.display.config import PATHS
+from humannotator.config import PATHS
 from humannotator.display.elements import element_factory
 
 

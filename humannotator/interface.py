@@ -1,40 +1,36 @@
 # local
-from humannotator.utils import Base
-from humannotator.annotation.annotations import Annotations, Annotation, Invalid
+from humannotator.utils import Base, option
+from humannotator.config import KEYS
 from humannotator.display.display import Display
+from humannotator.core.tasks import Invalid
 
 
 class Interface(Base):
     def __init__(self, annotator, *args, **kwargs):
         self.annotator = annotator
-        self.validate = annotator.annotations.task
-        self.instruction = '  \n'.join([
-            self.validate.instruction,
-            Stop.instruction,
-        ])
         self.args = args
         self.kwargs = kwargs
 
     def __call__(self, id):
-        annotation = Annotation()
-        display = Display(
-            self.annotator,
-            self.instruction,
-            **self.kwargs
-        )
+        display = Display(self.annotator, Exit.instruction, **self.kwargs)
         display.clear()
-        while True:
-            display(id)
-            user = input()
-            display.clear()
-            if user == Stop.character:
-                return Stop()
+        annotation = []
+        for task in self.annotator.annotations.tasks:
+            error = None
+            while True:
+                display(id, task, error=error)
+                user = input()
+                display.clear()
+                if user == Exit.character:
+                    return Exit()
+                user = task(user)
+                if not isinstance(user, Invalid):
+                    annotation.append(user)
+                    break
+                error = user.message
+        return annotation
 
-            user = self.validate(user)
-            if not isinstance(user, Invalid):
-                return annotation(user)
 
-
-class Stop(object):
-    character = '.'
-    instruction = f"[{character}] - exit"
+class Exit(object):
+    character = KEYS.exit
+    instruction = option(character, 'exit')

@@ -7,10 +7,10 @@ from inspect import Parameter, Signature
 from pathlib import Path
 
 # local
-from humannotator.display.config import SETTINGS, PATHS
+from humannotator.config import ELEMENTS, PATHS
 
 
-TABS = ' ' * SETTINGS.n_tabs
+TABS = ' ' * ELEMENTS.n_tabs
 
 
 def load_building_blocks(kind, suffix, language=None):
@@ -54,7 +54,7 @@ def element_factory(
     template_filename=None,
     template_string=None,
     cls_name=None,
-    language=SETTINGS.lang
+    language=ELEMENTS.lang
 ):
     if template_filename:
         path_tmpl = PATHS.templates / template_filename
@@ -74,7 +74,7 @@ def element_factory(
     api        = ['render']
     properties = ['id', 'level', 'css', 'content', 'language']
     snippets   = load_building_blocks('snippets', type_tmpl, language=language)
-    variables  = {var.lower() for var in re.findall(SETTINGS.regex, template)}
+    variables  = {var.lower() for var in re.findall(ELEMENTS.regex, template)}
 
     _fields = tuple(
         name for name in variables
@@ -88,6 +88,7 @@ def element_factory(
             'id': f"{self.__class__.__name__.lower()}_{str(uuid.uuid4())[-5:]}",
             'template_type': type_tmpl,
             'language': language,
+            '_content': [],
             'level': 1,
         }
         for name, value in attrs.items():
@@ -159,7 +160,6 @@ def element_factory(
 
         content_attrs = {
             '__call__': __call__,
-            '_content': [],
             '_unpack_content': _unpack_content,
             'content': content,
         }
