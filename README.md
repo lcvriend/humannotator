@@ -1,18 +1,29 @@
 # Humannotator
 
+**Library for conveniently creating simple customizable annotators 
+for manual annotation of your data**  
 *Jenia Kim, Lawrence Vriend*
 
-Library for creating annotators for your data.  
 Works well with Jupyter notebooks:
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lcvriend/humannotator/master?filepath=examples%2Fexamples.ipynb)
 
+## Use case
+The humannotator provides an easy way to set up custom annotators.
+This tool is for you if manual annotation is part of your workflow 
+and you are looking for a solution that is:
+
+- Lightweight
+- Customizable
+- Easy to set up
+- Integrates with Jupyter/pandas/Python
+
 ## Quick start
 ### Create a simple annotator
 
-1. [Load the data]('#load-data')
-2. [Define the tasks]('#define-tasks)
-3. [Instantiate the annotator]('#annotator')
+1. [Load the data](#load-data)
+2. [Define the tasks](#define-tasks)
+3. [Instantiate the annotator](#annotator)
 
 ```Python
     import pandas as pd
@@ -55,7 +66,7 @@ Works well with Jupyter notebooks:
 - Load the annotator with the `load` method.
 
 ## Load data
-The annotator accepts `list`, `dict` and `DataFrame` objects as data.  
+The annotator accepts `list`, `dict`, `Series` and `DataFrame` objects as data.  
 
 **dataframes**
 
@@ -72,8 +83,23 @@ Create a task by passing it:
 - the `name` of the task
 - (optionally) an `instruction`
 - if its `nullable` (default is False)
+- any kwargs necessary
 
-**Kind of tasks**
+Typically: 
+```Python
+    task_factory(
+        'kind',
+        'name',
+        instruction='instruction',
+        nullable=True/False,
+        kwarg=kwarg,
+    )
+```
+
+Passing a dict or list to `kind` will create a categorical task.  
+In this case the `categories` kwarg  is ignored.
+
+**Available tasks**
 
 kind      | kwargs     | dtype            | description
 --------- | -----------| ---------------- | ----------------
