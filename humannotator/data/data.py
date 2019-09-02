@@ -24,6 +24,9 @@ class Data(Base):
     def __len__(self):
         return len(self.ids)
 
+    def __getitem__(self, id):
+        return self.data[id]
+
 
 @register
 class Data_List(Data):
@@ -32,7 +35,6 @@ class Data_List(Data):
     def __init__(self, data):
         super().__init__(data)
         self.ids = list(range(0, len(data)))
-        self.items = data
 
 
 @register
@@ -42,7 +44,15 @@ class Data_Dict(Data):
     def __init__(self, data):
         super().__init__(data)
         self.ids = data.keys()
-        self.items = data.values()
+
+
+@register
+class Data_Series(Data):
+    kind = pd.Series
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.ids = self.data.index
 
 
 @register
