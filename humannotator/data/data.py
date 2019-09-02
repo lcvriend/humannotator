@@ -75,6 +75,24 @@ class Data_DataFrame(Data):
 
 
 def load_data(data, **kwargs):
+    """Prepare data for the Annotator.
+
+    Arguments
+    ---------
+    data : list-/dict-like, Series or DataFrame
+    item_cols : str or list of str, default None
+        Name(s) of dataframe column(s) to display when annotating.
+        By default: display all columns.
+    id_col : str, default None
+        Name of dataframe column to use as index.
+        By default: use the dataframe's index.
+
+    Returns
+    -------
+    data:
+        Data object that is used for annotating.
+    """
+
     for cls in registry.values():
         if isinstance(data, cls.kind):
             return cls(data, **kwargs)

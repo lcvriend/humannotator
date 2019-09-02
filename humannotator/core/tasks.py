@@ -197,6 +197,57 @@ class Task_date(Task):
 
 
 def task_factory(kind, *args, **kwargs):
+    """Create a specification for an annotation task.
+    The specification contains:
+    - the task name.
+    - the dtype in which the annotation should be stored.
+    - the method for validating the annotation input.
+    - an instruction (optional)
+
+    Arguments
+    ---------
+    kind : str, list- or dict-like
+        Kind of task. Options are:
+            'str' :      String
+            'regex' :    Regex validated string
+            'int' :      Integer
+            'float' :    Float
+            'bool' :     Boolean
+            'category' : Category
+            'date' :     Date
+        If `kind` is list-/dict-like, then categories will be inferred from it.
+    name : str
+        Task name (used as column name in the annotations dataframe).
+    instruction : str, default None
+        Instruction to be displayed for this task.
+    nullable : bool, default False
+        If True then the annotation input can be None.
+
+    Other parameters
+    ----------------
+    regex : str
+        Required regex for validating input string if task kind is 'regex'.
+    flags : int, default 0 (no flags)
+        Flags to pass through to the re module, e.g. re.IGNORECASE.
+    categories : list- or dict-like, default None
+        Valid categories if task kind is 'category'.
+        If a list is passed, then categories are numbered starting from '1'.
+        If a dict is passed, then keys are used for validating input.
+    format: str, default '%Y-%m-%d'
+        Date format for validating input string if task kind is 'date'.
+        Default: '%Y-%m-%d'
+
+    Returns
+    -------
+    task
+        Specification of the annotation task.
+
+    Warns
+    -----
+        If `kind` is list-/dict-like and `categories` is not None.
+        Task will be created from list-/dict-like and categories are ignored.
+    """
+
     if isinstance(kind, str):
         if kind not in registry:
             raise KeyError(
@@ -206,7 +257,7 @@ def task_factory(kind, *args, **kwargs):
     else:
         if 'categories' in kwargs:
             warn(
-                "Building categories from iterable passed to `dtype`. "
+                "Building categories from iterable passed to `kind`. "
                 "Therefore, whatever was passed to `categories` "
                 "will be ignored."
             )
