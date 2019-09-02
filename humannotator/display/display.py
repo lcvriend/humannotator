@@ -2,7 +2,6 @@
 import os
 from unicodedata import normalize
 
-
 # third party
 from markdown import markdown
 from IPython.display import HTML, display, clear_output
