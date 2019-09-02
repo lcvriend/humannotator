@@ -85,7 +85,7 @@ class DisplayText(ProtoDisplay):
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
         n_char = len(max(Layout_Txt._snippets.values(), key=len))
-        n_lbl  = len(Layout_Txt._snippets['_lbl_id_']) + 1
+        n_lbl  = len(Layout_Txt._snippets['_lbl_id_'])
         layout = Layout_Txt(
             **self.kwargs,
             instruction=task.instruction + self.exit,
