@@ -28,7 +28,7 @@ class Annotator(Base):
             self.data = data
 
     def __call__(self, ids=None):
-        if not ids:
+        if ids is None:
             ids = self.data.ids
         self.ids = [
             id for id in ids
