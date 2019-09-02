@@ -1,7 +1,11 @@
 # Humannotator
 
+*Jenia Kim, Lawrence Vriend*
+
 Library for creating annotators for your data.  
-Works well with Jupyter notebooks.
+Works well with Jupyter notebooks:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lcvriend/humannotator/master?filepath=examples%2Fexamples.ipynb)
 
 ## Quick start
 ### Create a simple annotator
