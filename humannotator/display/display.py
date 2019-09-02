@@ -18,17 +18,14 @@ def test_for_ipython():
     except NameError:
         return False
 
-
-_Counter   = element_factory(template_filename='_counter.txt')
-_Item_Txt  = element_factory(template_filename='_item.txt')
-LayOut_Txt = element_factory(template_filename='basic_layout.txt')
+_Counter = element_factory(template_filename='_counter.txt')
+Layout_Txt = element_factory(template_filename='basic_layout.txt')
 def clear():
     os.system('cls||echo -e \\\\033c')
 
 JUPYTER = test_for_ipython()
 if JUPYTER:
-    _Item_Html  = element_factory(template_filename='_item.html')
-    LayOut_Html = element_factory(template_filename='basic_layout.html')
+    Layout_Html = element_factory(template_filename='basic_layout.html')
     def clear():
         clear_output()
 
@@ -50,6 +47,11 @@ class ProtoDisplay(Base):
             'error':      error if error else '',
         }
 
+    def _create_items(self, items):
+        items = (normalize('NFKD', item) for item in items)
+        kwargs = dict(zip(['label', 'value'], items))
+        return self._item_layout(**kwargs)
+
     @property
     def index_counter(self):
         return _Counter(
@@ -63,34 +65,34 @@ class ProtoDisplay(Base):
 
 
 class DisplayJupyter(ProtoDisplay):
+    _item_layout = element_factory(template_filename='_item.html')
+
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
-        layout = LayOut_Html(
+        layout = Layout_Html(
             **self.kwargs,
             instruction=markdown(task.instruction + self.exit),
             index_count=self.index_counter,
         )
         for items in self.data[id].items():
-            items = (normalize('NFKD', item) for item in items)
-            kwargs = dict(zip(['label', 'value'], items))
-            layout(_Item_Html(**kwargs))
+            layout(self._create_items(items))
         display(HTML(layout.render()))
 
 
 class DisplayText(ProtoDisplay):
+    _item_layout = element_factory(template_filename='_item.txt')
+
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
-        n_char = len(max(LayOut_Txt._snippets.values(), key=len))
-        n_lbl  = len(LayOut_Txt._snippets['_lbl_id_']) + 1
-        layout = LayOut_Txt(
+        n_char = len(max(Layout_Txt._snippets.values(), key=len))
+        n_lbl  = len(Layout_Txt._snippets['_lbl_id_']) + 1
+        layout = Layout_Txt(
             **self.kwargs,
             instruction=task.instruction + self.exit,
             index_count=f"{self.index_counter:>{n_char-n_lbl-len(str(id))}}",
         )
         for items in self.data[id].items():
-            items = (normalize('NFKD', item) for item in items)
-            kwargs = dict(zip(['label', 'value'], items))
-            layout(_Item_Txt(**kwargs))
+            layout(self._create_items(items))
         print(layout.render())
 
 
