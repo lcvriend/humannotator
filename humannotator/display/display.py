@@ -18,7 +18,7 @@ def test_for_ipython():
     except NameError:
         return False
 
-_Counter = element_factory(template_filename='_counter.txt')
+Counter = element_factory(template_filename='_counter.txt')
 Layout_Txt = element_factory(template_filename='basic_layout.txt')
 def clear():
     os.system('cls||echo -e \\\\033c')
@@ -37,7 +37,7 @@ class ProtoDisplay(Base):
         self.exit = exit_instruction
 
     def __call__(self, id, task, error=None):
-        self.task_counter = _Counter(count=task.pos+1, total=task.of).render()
+        self.task_counter = Counter(count=task.pos+1, total=task.of).render()
         self.kwargs = {
             'annotator':  self.annotator.name,
             'task_count': self.task_counter,
@@ -54,7 +54,7 @@ class ProtoDisplay(Base):
 
     @property
     def index_counter(self):
-        return _Counter(
+        return Counter(
             count=self.annotator.i+1,
             total=len(self.annotator.ids)
         ).render()
