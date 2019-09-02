@@ -69,24 +69,26 @@ if __name__ == '__main__':
     from humannotator import Annotator, task_factory, load_data
     sys.path.insert(0, '../')
 
+    # load data
     df = pd.read_csv('examples/news.csv', index_col=0)
     data = load_data(df, item_cols=['title', 'date'], id_col='news_id')
 
-    instruction = "Choose one of the following options:"
+    # define tasks
     choices={
         '0': 'not adverse media',
         '1': 'adverse media',
-        '3': 'exclude from dataset'
+        '3': 'exclude from dataset',
     }
-    task1 = task_factory(
-        'category',
-        'Choice',
-        instruction=instruction,
-        categories=choices)
-    task2 = task_factory('bool', 'Relevant', instruction="State if the article is relevant")
+    instruct = "Is the topic political?"
+    task1 = task_factory(choices, 'Adverse media')
+    task2 = task_factory(
+        'bool',
+        'Political',
+        instruction=instruct,
+        nullable=True
+    )
 
-    annotations = Annotations([task1, task2])
-    annotator = Annotator(data, annotations)
-
+    # run annotator
+    annotator = Annotator(data, [task1, task2])
     annotator(data.ids)
-    print(annotator.annotatiosn.data)
+    print(annotator.annotated)
