@@ -9,6 +9,7 @@ Works well with Jupyter notebooks:
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lcvriend/humannotator/master?filepath=examples%2Fexamples.ipynb)
 
 ## Use case
+
 The humannotator provides an easy way to set up custom annotators.
 This tool is for you if manual annotation is part of your workflow 
 and you are looking for a solution that is:
@@ -19,6 +20,7 @@ and you are looking for a solution that is:
 - Integrates with Jupyter/pandas/Python
 
 ## Quick start
+
 ### Create a simple annotator
 
 1. [Load the data](#load-data)
@@ -66,6 +68,7 @@ and you are looking for a solution that is:
 - Load the annotator with the `load` method.
 
 ## Load data
+
 The annotator accepts `list`, `dict`, `Series` and `DataFrame` objects as data.  
 
 **dataframes**
@@ -76,6 +79,7 @@ The annotator accepts `list`, `dict`, `Series` and `DataFrame` objects as data.
     2. `item_cols` set the column or columns to be displayed.
 
 ## Define tasks
+
 Tasks are set up, using the `task_factory`.
 Create a task by passing it:
 
@@ -119,3 +123,5 @@ If not, the annotator will render itself as text.
 
 You can force the annotator to render to text.
 Set `text_display` to True when instantiating.
+
+If you want to only annotate specific records, pass a list of ids to the annotator call.
