@@ -78,6 +78,12 @@ def load_data(data, **kwargs):
     for cls in registry.values():
         if isinstance(data, cls.kind):
             return cls(data, **kwargs)
+    else:
+        raise ValueError(
+            f"Data type '{type(data).__name__}' is not supported. "
+            "Data needs to be of one of the following types: "
+            f"{[cls.kind.__name__ for cls in registry.values()]}."
+        )
 
 
 if __name__ == '__main__':
