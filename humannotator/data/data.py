@@ -15,7 +15,7 @@ def register(cls):
 
 
 class Data(Base):
-    def __init__(self, data):
+    def __init__(self, data, **kwargs):
         try:
             self.data = data.copy()
         except AttributeError:
@@ -32,8 +32,8 @@ class Data(Base):
 class Data_List(Data):
     kind = Sequence
 
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, data, **kwargs):
+        super().__init__(data, **kwargs)
         self.ids = list(range(0, len(data)))
 
 
@@ -41,8 +41,8 @@ class Data_List(Data):
 class Data_Dict(Data):
     kind = Mapping
 
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, data, **kwargs):
+        super().__init__(data, **kwargs)
         self.ids = data.keys()
 
 
@@ -50,8 +50,8 @@ class Data_Dict(Data):
 class Data_Series(Data):
     kind = pd.Series
 
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, data, **kwargs):
+        super().__init__(data, **kwargs)
         self.ids = self.data.index
 
 
@@ -59,8 +59,8 @@ class Data_Series(Data):
 class Data_DataFrame(Data):
     kind = pd.DataFrame
 
-    def __init__(self, data, item_cols=None, id_col=None):
-        super().__init__(data)
+    def __init__(self, data, item_cols=None, id_col=None, **kwargs):
+        super().__init__(data, **kwargs)
         if id_col:
             self.data = self.data.set_index(id_col)
         if not item_cols:
