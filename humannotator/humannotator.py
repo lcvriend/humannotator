@@ -47,12 +47,11 @@ class Annotator(Base):
     def annotated(self):
         return self.annotations.data
 
-    def merged(self, prefix=''):
-        return self.data.data.merge(
-            self.annotated.add_prefix(prefix),
-            left_index=True,
-            right_index=True
-        )
+        d = self.data.data.copy()
+        a = self.annotated.copy()
+        d.columns = pd.MultiIndex.from_product([['DATA'], d.columns])
+        a.columns = pd.MultiIndex.from_product([['ANNOTATIONS'], a.columns])
+        return d.merge(a, left_index=True, right_index=True)
 
     def save(self, filename):
         with open(filename, 'wb') as f:
