@@ -9,7 +9,7 @@ CFG_FILE  = PATH_LIB / 'config.ini'
 encoding = 'utf-8' # encoding of ini file only
 
 QUOTECHAR = '"'
-SEPARATORS = ['\n', '\t', ',', ';']
+SEPARATOR = ','
 BOOLEAN_STATES = {
     'true': True, 'false': False,
     't':    True, 'f':     False,
@@ -58,26 +58,47 @@ def parse_value(value):
     if value[:1] == QUOTECHAR and value[-1:] == QUOTECHAR:
         return value.strip(QUOTECHAR)
     if value[:1] == '[' and value[-1:] == ']':
-        return get_list(value[1:-1])
+        return get_list(value[1:-1].strip('\n '))
     if any(item == value.lower() for item in BOOLEAN_STATES):
         return BOOLEAN_STATES[value.lower()]
     return value
 
 
+def chunker(value):
+    def chunk(value, idx):
+        return value[:idx], value[idx+1:].strip('\n ')
+
+    if len(value) == 0:
+        return None, None
+    elif value[0] == QUOTECHAR:
+        idx = value.find(value[0], 1) + 1
+        return chunk(value, idx)
+    else:
+        idx = value.find(SEPARATOR)
+        if idx == -1:
+            return value, None
+        return chunk(value, idx)
+
+
 def get_list(value):
-    for sep in SEPARATORS:
-        value = value.strip('\n').replace(sep, ',')
-    lst = [i.strip() for i in value.split(',') if i.strip() is not '']
+    lst = []
+    while True:
+        chunk, value = chunker(value)
+        if chunk is not None:
+            lst.append(parse_value(chunk))
+        if value is None:
+            break
     if len(lst) > 1:
         return lst
-    return value
+    return lst
 
 
 # easy access to settings and paths
 config = load_ini(CFG_FILE)
-KEYS      = get_section(config, 'KEYS')
-ELEMENTS  = get_section(config, 'ELEMENTS')
-PATHS     = get_section(
+KEYS     = get_section(config, 'KEYS')
+ELEMENTS = get_section(config, 'ELEMENTS')
+CSS      = get_section(config, 'CSS')
+PATHS    = get_section(
     config,
     'PATHS',
     func=lambda x: PATH_LIB / x[1:] if x.startswith('/') else Path(x)

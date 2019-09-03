@@ -6,7 +6,7 @@ import unittest
 # local
 from humannotator.config import (
     QUOTECHAR,
-    SEPARATORS,
+    SEPARATOR,
     BOOLEAN_STATES,
     parse_value,
 )
@@ -38,20 +38,16 @@ class ParseValueTestCase(unittest.TestCase):
 
     def test_parse_list(self):
         output = 'a b c d e'.split()
-        tests = []
-        for sep in SEPARATORS:
-            tests.append(f"[{sep.join(output)}]")
-        for i in tests:
-            with self.subTest(i=i):
-                self.assertEqual(parse_value(i), output)
-
-    def test_parse_list(self):
-        output = 'a b c d e'.split()
         test = (
-            "  [a, b,c \n"
+            "  [a, b,c, \n"
             "   d,  e,\n"
             "  ]\n"
         )
+        self.assertEqual(parse_value(test), output)
+
+    def test_parse_list_to_type(self):
+        output = [1, 2.1, True, 'a,b', 'x']
+        test = '[1, 2.1, True, "a,b", x]'
         self.assertEqual(parse_value(test), output)
 
     def test_parse_boolean(self):
