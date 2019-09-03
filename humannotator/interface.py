@@ -6,9 +6,8 @@ from humannotator.core.tasks import Invalid
 
 
 class Interface(Base):
-    def __init__(self, annotator, *args, **kwargs):
+    def __init__(self, annotator, **kwargs):
         self.annotator = annotator
-        self.args = args
         self.kwargs = kwargs
 
     def __call__(self, id):
