@@ -67,3 +67,7 @@ div.humannotator__task__name {
     font-size: 1.2em;
     margin-bottom: .25rem;
 }
+.humannotator mark {
+    padding: 1px 8px;
+    border-radius: 2px;
+}

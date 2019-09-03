@@ -77,14 +77,15 @@ class Annotator(Base):
         else:
             self.data = data
 
-    def __call__(self, ids=None):
+    def __call__(self, ids=None, **kwargs):
+        kwargs.update(self.kwargs)
         if ids is None:
             ids = self.data.ids
         self.ids = [
             id for id in ids
             if id not in self.annotations.data.index
         ]
-        interface = Interface(self, *self.args, **self.kwargs)
+        interface = Interface(self, *self.args, **kwargs)
         for i, id in enumerate(self.ids):
             self.i = i
             user = interface(id)
