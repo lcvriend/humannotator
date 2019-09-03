@@ -48,13 +48,14 @@ and you are looking for a solution that is:
         nullable=True
     )
 
-    annotator = Annotator(df[cols], [task1, task2])
+    annotator = Annotator([task1, task2], df[cols])
 ```
 
 ### Annotate your data
 
 - Use the annotator by calling it: `annotator()`.
 - The annotator keeps track of where you were.
+- <mark>Highlight</mark> phrases with the 'highlight_text' argument.
 
 ### Access your annotations
 
@@ -120,8 +121,9 @@ date      |            | datetime64[ns]   | Date
 The annotator detects if it is run from Jupyter.
 If so, the annotator will render itself in html and css.
 If not, the annotator will render itself as text.
-
 You can force the annotator to render to text.
-Set `text_display` to True when instantiating.
+Set `text_display` to True when instantiating or calling.
 
-If you want to only annotate specific records, pass a list of ids to the annotator call.
+If you want to:
+- Only annotate specific records, pass a list of ids to the annotator call.
+- Pickle the data with the annotator, set the `save_data` flag to True.
