@@ -31,21 +31,33 @@ class Annotator(Base):
         - Annotation data
     """
 
-    def __init__(self, data, tasks, *args, name='HUMANNOTATOR', **kwargs):
+    def __init__(
+        self,
+        tasks,
+        data=None,
+        name='HUMANNOTATOR',
+        save_data=False,
+        **kwargs
+    ):
         """Create an annotator.
 
         arguments
         ---------
-        data : data, list-/dict-like, Series or DataFrame
-            Data to be annotated.
-            If `data` is not already a data object,
-            then it will be passed through `load_data`.
         tasks : task, list of task or DataFrame
             Annotation task(s).
             If passed a DataFrame, then the tasks will be inferred from it.
             Annotation data in the dataframe will also be initialized.
+        data : data, list-/dict-like, Series or DataFrame, default None
+            Data to be annotated.
+            If `data` is not already a data object,
+            then it will be passed through `load_data`.
+            The annotator can be instantiated without data,
+            but will only work after data is loaded.
         name : str, default='HUMANNOTATOR'
             Name of the annotator.
+        save_data : boolean, default False
+            Set flag to True if you want to store the data with the annotator.
+            This will ensure that the pickled object, will contain the data.
 
         other parameters
         ----------------
@@ -57,6 +69,8 @@ class Annotator(Base):
         id_col : str, default None
             Name of dataframe column to use as index.
             By default: use the dataframe's index.
+        highlight_text : str, default None
+            Phrase to highlight in the display.
 
         returns
         -------
@@ -64,20 +78,14 @@ class Annotator(Base):
         """
 
         self.name = name
-        self.args = args
+        self.annotations = tasks
+        self.data = data
+        self.save_data = save_data
         self.kwargs = kwargs
 
-        if isinstance(tasks, pd.DataFrame):
-            self.annotations = Annotations.from_df(tasks)
-        else:
-            self.annotations = Annotations(tasks)
-
-        if not isinstance(data, Data):
-            self.data = load_data(data, **kwargs)
-        else:
-            self.data = data
-
     def __call__(self, ids=None, **kwargs):
+        if self.data is None:
+            return None
         kwargs.update(self.kwargs)
         if ids is None:
             ids = self.data.ids
@@ -85,7 +93,7 @@ class Annotator(Base):
             id for id in ids
             if id not in self.annotations.data.index
         ]
-        interface = Interface(self, *self.args, **kwargs)
+        interface = Interface(self, **kwargs)
         for i, id in enumerate(self.ids):
             self.i = i
             user = interface(id)
@@ -94,6 +102,50 @@ class Annotator(Base):
             self.annotations[id] = user
         return None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if not self.save_data:
+            del state['_data']
+        return state
+
+    def __setstate__(self, state):
+        if '_data' not in state:
+            state['_data'] = None
+        self.__dict__.update(state)
+
+    @property
+    def data(self):
+        "Data to be annotated."
+        if self._data is None:
+            print(
+                "NO DATA LOADED\n"
+                "==============\n"
+                "Load the data first by assigning it "
+                "to the `data` property of the annotator."
+            )
+        return self._data
+
+    @data.setter
+    def data(self, data):
+        if data is None:
+            self._data = None
+        elif not isinstance(data, Data):
+            self._data = load_data(data, **kwargs)
+        else:
+            self._data = data
+
+    @property
+    def annotations(self):
+        "The annotations object containing the tasks and annotation data."
+        return self._annotations
+
+    @annotations.setter
+    def annotations(self, tasks):
+        if isinstance(tasks, pd.DataFrame):
+            self._annotations = Annotations.from_df(tasks)
+        else:
+            self._annotations = Annotations(tasks)
+
     @property
     def annotated(self):
         "Dataframe with the stored annotations."
@@ -101,6 +153,8 @@ class Annotator(Base):
 
     def merged(self):
         "Return dataframe combining data and annotations."
+        if self.data is None:
+            return None
         d = self.data.data.copy()
         a = self.annotated.copy()
         d.columns = pd.MultiIndex.from_product([['DATA'], d.columns])
@@ -108,13 +162,15 @@ class Annotator(Base):
         return d.merge(a, left_index=True, right_index=True)
 
     def save(self, filename):
-        "Save the annotator with the pickle protocol."
+        "Save the annotator with the pickle protocol. "
+        "If save_data is True, then data will be stored with the annotator."
         with open(filename, 'wb') as f:
             pickle.dump(self, f)
 
     @staticmethod
     def load(filename):
-        "Load an annotator from a pickle file."
+        "Load an annotator from a pickle file. "
+        "If save_data is False, then data needs to be loaded in separately."
         with open(filename, 'rb') as f:
             return pickle.load(f)
 
@@ -145,6 +201,6 @@ if __name__ == '__main__':
     )
 
     # run annotator
-    annotator = Annotator(data, [task1, task2])
+    annotator = Annotator([task1, task2], data)
     annotator(data.ids)
     print(annotator.annotated)
