@@ -97,12 +97,15 @@ def load_data(data, **kwargs):
     -------
     data:
         Data object that is used for annotating.
+        The data itself will be converted to a dataframe.
     """
 
-    if isinstance(data, (list, pd.Series)):
+    if isinstance(data, list):
+        data = pd.DataFrame(data).add_prefix('item_')
+    elif isinstance(data, dict):
+        data = pd.DataFrame(data.values(), data.index()).add_prefix('item_')
+    elif isinstance(data, pd.Series):
         data = pd.DataFrame(data)
-    elif isintance(data, dict):
-        data = pd.DataFrame(data.values(), data.index())
 
     for cls in registry.values():
         if isinstance(data, cls.kind):
