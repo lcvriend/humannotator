@@ -69,8 +69,16 @@ class Annotator(Base):
         id_col : str, default None
             Name of dataframe column to use as index.
             By default: use the dataframe's index.
-        highlight_text : str, default None
-            Phrase to highlight in the display.
+        phrases : str, list of str, default None
+            Phrases to highlight in the display.
+            The phrases can be regexes.
+            It also to pass in a dict where:
+            - the keys are the phrases
+            - the values are the css styling
+        escape : boolean, default False
+            Set escape to True in order to escape the phrases.
+        flags : int, default 0 (no flags)
+            Flags to pass through to the re module, e.g. re.IGNORECASE.
 
         returns
         -------
