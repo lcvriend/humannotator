@@ -116,13 +116,15 @@ class Display(ProtoDisplay):
 class Highlighter(Base):
     styles = CSS.highlight,
 
-    def __init__(self, template, phrases, escape=False, flags=0):
+    def __init__(self, template, phrases=None, escape=False, flags=0):
         self.template = template
         self.escape   = escape
         self.flags    = flags
         self.phrases  = phrases
 
     def __call__(self, item):
+        if self.phrases is None:
+            return item
         for phrase, style in self.phrases.items():
             phrase = re.escape(phrase) if self.escape else phrase
             matches = re.findall(phrase, item, flags=self.flags)
