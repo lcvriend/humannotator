@@ -77,11 +77,11 @@ class Annotator(Base):
         annotator
         """
 
+        self.kwargs = kwargs
         self.name = name
         self.annotations = tasks
         self.data = data
         self.save_data = save_data
-        self.kwargs = kwargs
 
     def __call__(self, ids=None, **kwargs):
         if self.data is None:
@@ -130,7 +130,7 @@ class Annotator(Base):
         if data is None:
             self._data = None
         elif not isinstance(data, Data):
-            self._data = load_data(data, **kwargs)
+            self._data = load_data(data, **self.kwargs)
         else:
             self._data = data
 
