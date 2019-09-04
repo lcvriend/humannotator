@@ -5,7 +5,6 @@ import unittest
 from pandas import CategoricalDtype
 
 # local
-import tests.prep
 from humannotator.utils import option
 from humannotator.config import BOOLEAN_STATES, KEYS
 from humannotator.core.tasks import task_factory, Invalid
