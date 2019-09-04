@@ -27,6 +27,9 @@ class Data(Base):
     def __getitem__(self, id):
         return self.data[id]
 
+    def items(self, id):
+        return [('item', self[id])]
+
 
 @register
 class Data_List(Data):
@@ -72,6 +75,9 @@ class Data_DataFrame(Data):
 
     def __getitem__(self, id):
         return self.data.loc[id, self.item_cols]
+
+    def items(self, id):
+        return self[id].items()
 
 
 def load_data(data, **kwargs):

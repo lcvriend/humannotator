@@ -97,7 +97,7 @@ class DisplayJupyter(ProtoDisplay):
             instruction=markdown(task.instruction + self.exit),
             index_count=self.index_counter,
         )
-        for items in self.data[id].items():
+        for items in self.data.items(id):
             layout(self.format_items(items))
         display(HTML(layout.render()))
 
@@ -115,7 +115,7 @@ class DisplayText(ProtoDisplay):
             instruction=task.instruction + self.exit,
             index_count=f"{self.index_counter:>{n_char-n_lbl-len(str(id))}}",
         )
-        for items in self.data[id].items():
+        for items in self.data.items(id):
             layout(self.format_items(items))
         print(layout.render())
 
