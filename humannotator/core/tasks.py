@@ -140,6 +140,18 @@ class Task_bool(Task):
     kind = 'bool'
     dtype = 'bool'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        states = {
+            '1': 'True',
+            '0': 'False',
+        }
+        items = ''.join(option(i,c) for i, c in states.items())
+        if self._instruction:
+            self._instruction = self._instruction + items
+        else:
+            self._instruction = items
+
     def __call__(self, value):
         value = super().__call__(value)
         if value:
