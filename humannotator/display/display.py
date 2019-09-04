@@ -54,7 +54,7 @@ class ProtoDisplay(Base):
         }
 
     def format_items(self, items):
-        items = (normalize('NFKD', item) for item in items)
+        items = (normalize('NFKD', str(item)) for item in items)
         kwargs = dict(zip(['label', 'value'], items))
         kwargs['value'] = self.highlighter(kwargs['value'], **self.kwargs)
         return self.item_layout(**kwargs)
