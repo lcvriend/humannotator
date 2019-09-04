@@ -1,5 +1,8 @@
 # standard library
 import os
+import re
+from collections.abc import Mapping
+from itertools import cycle
 from unicodedata import normalize
 
 # third party
@@ -30,16 +33,13 @@ if JUPYTER:
     def clear():
         clear_output()
 
-DEFAULTS = {
-    'highlight_style': CSS.highlight[0],
-}
-
 
 class ProtoDisplay(Base):
-    def __init__(self, annotator, exit_instruction, **kwargs):
+    def __init__(self, annotator, exit_instruction, *args, **kwargs):
         self.annotator = annotator
         self.data = annotator.data
         self.exit = exit_instruction
+        self.highlighter = Highlighter(self.highlight_template, *args, **kwargs)
         self.kwargs = kwargs
 
     def __call__(self, id, task, error=None):
@@ -56,23 +56,8 @@ class ProtoDisplay(Base):
     def format_items(self, items):
         items = (normalize('NFKD', str(item)) for item in items)
         kwargs = dict(zip(['label', 'value'], items))
-        kwargs['value'] = self.highlighter(kwargs['value'], **self.kwargs)
+        kwargs['value'] = self.highlighter(kwargs['value'])
         return self.item_layout(**kwargs)
-
-    def highlighter(self, item, highlight_text=None, **kwargs):
-        context = dict(text=highlight_text)
-        for key in kwargs:
-            if key in self.highlight_template._fields:
-                context[key] = kwargs[key]
-        for key in self.highlight_template._fields:
-            if key not in context:
-                context[key] = DEFAULTS[key]
-        if not highlight_text is None:
-            item = item.replace(
-                highlight_text,
-                self.highlight_template(**context).render()
-            )
-        return item
 
     @property
     def index_counter(self):
@@ -126,3 +111,39 @@ class Display(ProtoDisplay):
             if JUPYTER:
                 return DisplayJupyter(*args, **kwargs)
         return DisplayText(*args, **kwargs)
+
+
+class Highlighter(Base):
+    styles = CSS.highlight,
+
+    def __init__(self, template, phrases, escape=False, flags=0):
+        self.template = template
+        self.escape   = escape
+        self.flags    = flags
+        self.phrases  = phrases
+
+    def __call__(self, item):
+        for phrase, style in self.phrases.items():
+            phrase = re.escape(phrase) if self.escape else phrase
+            matches = re.findall(phrase, item, flags=self.flags)
+            for match in matches:
+                context = {'text': match}
+                if 'style' in self.template._fields:
+                    context['style'] = style
+                item = item.replace(match, self.template(**context).render())
+        return item
+
+    @property
+    def phrases(self):
+        return self._phrases
+
+    @phrases.setter
+    def phrases(self, phrases):
+        if phrases is None:
+            self._phrases = None
+        else:
+            if isinstance(phrases, str):
+                phrases = [phrases]
+            if phrases is not Mapping:
+                phrases = dict(zip(phrases, cycle(*self.styles)))
+            self._phrases = phrases
