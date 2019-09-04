@@ -1,6 +1,4 @@
 # standard library
-import sys
-sys.path.insert(0, '../humannotator')
 import unittest
 
 # third party
@@ -40,9 +38,6 @@ class AnnotationsTestCase(unittest.TestCase):
 
     def test_ntasks(self):
         self.assertEqual(self.instance.ntasks, len(self.names))
-
-    def test_instructions(self):
-        self.assertEqual(self.instance.instructions, self.instructions)
 
     def test_from_df_constructor(self):
         df = pd.DataFrame(columns=self.names

@@ -1,12 +1,12 @@
 # standard library
-import sys
-sys.path.insert(0, '../humannotator')
 import unittest
 
 # third party
 from pandas import CategoricalDtype
 
 # local
+import tests.prep
+from humannotator.utils import option
 from humannotator.config import BOOLEAN_STATES, KEYS
 from humannotator.core.tasks import task_factory, Invalid
 
@@ -17,7 +17,7 @@ class TaskFactoryTestCase(unittest.TestCase):
             'kind':        'str',
             'dtype':       'object',
             'name':        'a',
-            'instruction': 'eat my shorts',
+            'instruction': 'eat my shorts  \n',
             'nullable':     False,
         }
         task = task_factory('str', 'a', instruction='eat my shorts')
@@ -44,11 +44,8 @@ class TaskCategoryTestCase(unittest.TestCase):
         )
 
     def test_instruction(self):
-        instruction = (
-            "[1] x  \n"
-            "[2] y  \n"
-            "[3] z  \n"
-        )
+        categories = zip('1 2 3'.split(), 'x y z'.split())
+        instruction = ''.join(option(i, c) for i, c in categories)
         self.assertEqual(instruction, self.task.instruction)
 
     def test_equality_with_task_from_iterable(self):

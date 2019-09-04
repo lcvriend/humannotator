@@ -1,7 +1,4 @@
 # standard library
-import sys
-sys.path.insert(0, '../humannotator')
-
 import unittest
 
 # local
