@@ -71,6 +71,7 @@ and you are looking for a solution that is:
 ## Load data
 
 The annotator accepts `list`, `dict`, `Series` and `DataFrame` objects as data.  
+The data will be converted to a dataframe internally.
 
 **dataframes**
 
