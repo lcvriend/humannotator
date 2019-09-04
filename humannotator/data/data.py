@@ -99,6 +99,11 @@ def load_data(data, **kwargs):
         Data object that is used for annotating.
     """
 
+    if isinstance(data, (list, pd.Series)):
+        data = pd.DataFrame(data)
+    elif isintance(data, dict):
+        data = pd.DataFrame(data.values(), data.index())
+
     for cls in registry.values():
         if isinstance(data, cls.kind):
             return cls(data, **kwargs)
