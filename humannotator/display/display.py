@@ -64,6 +64,13 @@ class ProtoDisplay(Base):
             total=len(self.annotator.ids)
         ).render()
 
+    @staticmethod
+    def clear():
+        if JUPYTER:
+            clear_output()
+        else:
+            os.system('cls||echo -e \\\\033c')
+
 
 class DisplayJupyter(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.html')
@@ -80,10 +87,6 @@ class DisplayJupyter(ProtoDisplay):
         for items in self.data.items(id):
             layout(self.format_items(items))
         display(HTML(layout.render()))
-
-    @staticmethod
-    def clear():
-        clear_output()
 
 
 class DisplayText(ProtoDisplay):
@@ -103,9 +106,6 @@ class DisplayText(ProtoDisplay):
         for items in self.data.items(id):
             layout(self.format_items(items))
         print(layout.render())
-
-    def clear():
-        os.system('cls||echo -e \\\\033c')
 
 
 class Display(ProtoDisplay):
