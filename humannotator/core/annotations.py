@@ -7,7 +7,7 @@ from humannotator.core.tasks import registry, task_factory
 
 
 class Annotations(Base):
-    def __init__(self, tasks):
+    def __init__(self, tasks, dependencies=None):
         if not isinstance(tasks, list):
             tasks = [tasks]
         for idx, task in enumerate(tasks):
@@ -30,10 +30,15 @@ class Annotations(Base):
     def instructions(self):
         return [task.instruction for task in self.tasks]
 
-    def __setitem__(self, id, values):
-        values.append(pd.Timestamp('now'))
-        annotation = pd.Series(values, index=self.data.columns, name=id)
-        self.data = self.data.append(annotation)
+    def __setitem__(self, id, value):
+        now = pd.Timestamp('now')
+        if isinstance(id, tuple):
+            idx, task = id
+            self.data.loc[idx, [task, 'timestamp']] = (value, now)
+        else:
+            values.append(pd.Timestamp('now'))
+            annotation = pd.Series(values, index=self.data.columns, name=id)
+            self.data = self.data.append(annotation)
 
     def __eq__(self, other):
         if isinstance(other, Annotations):

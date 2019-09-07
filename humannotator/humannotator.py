@@ -7,15 +7,18 @@ import pandas as pd
 # local
 from humannotator.utils import Base
 from humannotator.data.data import Data, load_data
-from humannotator.interface import Interface, Exit
+from humannotator.interface import Interface
 from humannotator.core.annotations import Annotations
 
 
 class Annotator(Base):
-    """Annotator:
+    """
+    Annotator
+    =========
     - Stores the data to be annotated
     - Stores the annotation data
     - Provides an annotation interface
+
     Call to start annotating the data.
     Pass a list of ids to the call to annotate only a subset of the data.
 
@@ -29,6 +32,10 @@ class Annotator(Base):
         Object containing:
         - Annotation tasks
         - Annotation data
+    annotated : DataFrame
+        Annotation data.
+    merged : DataFrame
+        Table merging data and annotations.
     """
 
     def __init__(
@@ -104,11 +111,10 @@ class Annotator(Base):
         interface = Interface(self, **kwargs)
         for i, id in enumerate(self.ids):
             self.i = i
-            user = interface(id)
-            if isinstance(user, Exit):
+            interface(id)
+            if not interface.active:
                 break
-            self.annotations[id] = user
-        return None
+
 
     def __getstate__(self):
         state = self.__dict__.copy()

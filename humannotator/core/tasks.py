@@ -61,32 +61,79 @@ class Task(Base):
     """
     alias = [None]
 
-    def __init__(self, name, *args, instruction=None, nullable=False, **kwargs):
+    def __init__(
+        self,
+        name,
+        *args,
+        instruction=None,
+        nullable=False,
+        dependencies=None,
+        **kwargs,
+    ):
+
         self.name = name
         self.nullable = nullable
-        if not instruction:
-            self._instruction = instruction
-        else:
-            self._instruction = instruction + '  \n'
+        self.instruction = instruction
+        self.dependencies = dependencies
 
     @property
     def instruction(self):
-        instruction = self._instruction
-        if not instruction:
-            instruction = ''
         if self.nullable:
-            return instruction + Null.instruction
-        return instruction
+            return self._instruction + Null.instruction
+        return self._instruction
 
     @instruction.setter
     def instruction(self, value):
-        self._instruction = value
+        if value is None:
+            self._instruction = ''
+        else:
+            self._instruction = value + '  \n'
 
     @property
     def invalid(self):
+        "Message for when input is invalid."
         return f"Input cannot be parsed as {self.kind}."
 
+    @property
+    def dependencies(self):
+        "Task dependencies."
+        return self._dependencies
+
+    @dependencies.setter
+    def dependencies(self, dependencies):
+        if dependencies is None:
+            self._dependencies = []
+        else:
+            if isinstance(dependencies, Dependency):
+                dependencies = [dependencies]
+            elif isinstance(dependencies, tuple):
+                dependencies = [Dependency(*dependencies)]
+            dependencies = [
+                i if isinstance(i, Dependency) else Dependency(*i)
+                for i in dependencies
+            ]
+            for i in dependencies:
+                self._validate_dependency(i)
+            self._dependencies = dependencies
+
+    def _validate_dependency(self, dependency):
+        "Validate the dependency value."
+        check = self(dependency.value)
+        if isinstance(check, Invalid):
+            raise ValueError(
+                f"Dependency with condition '{dependency.condition}' "
+                f"is associated with an invalid value. {check.message}"
+            )
+
+    @property
+    def has_dependencies(self):
+        "True if there is at least one dependency, False otherwise."
+        if self.dependencies:
+            return True
+        return False
+
     def __call__(self, value):
+        "Validate input."
         if self.nullable:
             if value == Null.character:
                 return None
@@ -306,3 +353,9 @@ def task_factory(kind, *args, **kwargs):
         kind = 'category'
 
     return registry[kind](*args, **kwargs)
+
+
+class Dependency(Base):
+    def __init__(self, condition, value):
+        self.condition = condition
+        self.value     = value
