@@ -30,6 +30,35 @@ class Null(object):
 
 
 class Task(Base):
+    """
+    Task
+    ====
+    Defines a task.
+    Validates its input.
+
+    Attributes
+    ----------
+    kind : str
+        The kind of task.
+    dtype : str
+        String representing the pandas dtype in which the input will be stored.
+    alias : list of str
+        Aliases for the pandas dtype.
+        Used when converting a DataFrame to a list of tasks.
+    name : str
+        Name of the task.
+    instruction : str
+        Instruction for the user.
+    nullable : boolean, default False
+        Whether the input can be null.
+    dependencies : list of Dependency objects, default None
+        Any dependencies associated with the task.
+        - A dependency consists of a condition and a value.
+        - The interface will check the condition before prompting the user.
+        - If the condition is met, the value will be automatically assigned.
+    has_dependencies : boolean
+        True if there is at least one dependency, False otherwise.
+    """
     alias = [None]
 
     def __init__(self, name, *args, instruction=None, nullable=False, **kwargs):
