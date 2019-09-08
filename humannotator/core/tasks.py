@@ -65,7 +65,6 @@ class Task(Base):
     def __init__(
         self,
         name,
-        *args,
         instruction=None,
         nullable=False,
         dependencies=None,
