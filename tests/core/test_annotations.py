@@ -20,6 +20,7 @@ class AnnotationsTestCase(unittest.TestCase):
             task_factory(args[0], args[1], instruction=args[2])
             for args in zip(self.dtypes, self.names, self.instructions)
         ]
+
         self.instance = Annotations(tasks)
 
     def test_annotations_data(self):
@@ -47,11 +48,12 @@ class AnnotationsTestCase(unittest.TestCase):
         )
         self.assertTrue(constructed == self.instance)
 
-    def tearDown(self):
-        del self.names
-        del self.dtypes
-        del self.instructions
-        del self.instance
+
+class ConstructorTestCase(unittest.TestCase):
+    def test_from_mixed_df_constructor(self):
+        df = pd.util.testing.makeMixedDataFrame()
+        annotations = Annotations.from_df(df)
+        self.assertIsInstance(annotations, Annotations)
 
 
 if __name__ == '__main__':
