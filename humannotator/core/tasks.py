@@ -368,3 +368,8 @@ class Dependency(Base):
     def __init__(self, condition, value):
         self.condition = condition
         self.value     = value
+
+    def __eq__(self, other):
+        if isinstance(other, Dependency):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
