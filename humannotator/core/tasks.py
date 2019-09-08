@@ -85,7 +85,7 @@ class Task(Base):
 
     @instruction.setter
     def instruction(self, value):
-        if value is None:
+        if value is None or value != value:
             self._instruction = ''
         else:
             self._instruction = value + '  \n'
