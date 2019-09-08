@@ -55,7 +55,7 @@ and you are looking for a solution that is:
 
 - Use the annotator by calling it: `annotator()`.
 - The annotator keeps track of where you were.
-- <mark>Highlight</mark> phrases with the 'highlight_text' argument.
+- Highlight phrases with the 'phrases' argument.
 
 ### Access your annotations
 
@@ -73,7 +73,7 @@ and you are looking for a solution that is:
 The annotator accepts `list`, `dict`, `Series` and `DataFrame` objects as data.  
 The data will be converted to a dataframe internally.
 
-**dataframes**
+### dataframes
 
 - By default, the annotator will use its `index` and all `columns`.  
 - Use `load_data` to create a `data` object if you need more control:
@@ -88,7 +88,8 @@ Create a task by passing it:
 - the `kind` of task
 - the `name` of the task
 - (optionally) an `instruction`
-- if its `nullable` (default is False)
+- (optionally) a list of `dependencies`
+- whether it is `nullable` (default is False)
 - any kwargs necessary
 
 Typically: 
@@ -97,15 +98,16 @@ Typically:
         'kind',
         'name',
         instruction='instruction',
+        dependencies=dependencies,
         nullable=True/False,
-        kwarg=kwarg,
+        **kwargs,
     )
 ```
 
 Passing a dict or list to `kind` will create a categorical task.  
-In this case the `categories` kwarg  is ignored.
+In this case the `categories` kwarg is ignored.
 
-**Available tasks**
+### Available tasks
 
 kind      | kwargs     | dtype            | description
 --------- | -----------| ---------------- | ----------------
@@ -116,6 +118,18 @@ float     |            | float64          | Float
 bool      |            | bool             | Boolean
 category  | categories | CategoricalDtype | Categorical variable
 date      |            | datetime64[ns]   | Date
+
+### Dependencies
+
+Dependencies consist of a *condition* and a *value*, that can be passed as tuple:
+
+```Python
+    ("col1 == 'x'", False)
+```
+
+The condition is a [pandas query statement](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.query.html#pandas.DataFrame.query).
+Before prompting the user for input, the condition is evaluated on the current annotation.
+If the query evaluates to True then the value will be assigned automatically.
 
 ## Annotator
 
