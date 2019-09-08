@@ -7,7 +7,7 @@ from pandas import CategoricalDtype
 # local
 from humannotator.utils import option
 from humannotator.config import BOOLEAN_STATES, KEYS
-from humannotator.core.tasks import task_factory, Invalid
+from humannotator.core.tasks import task_factory, Dependency, Invalid
 
 
 class TaskFactoryTestCase(unittest.TestCase):
@@ -98,6 +98,21 @@ class ValidationTaskTestCase(unittest.TestCase):
     def test_validation_invalid_category(self):
         task = task_factory(['x', 'y', 'z'], 'a')
         self.assertIsInstance(task('u'), Invalid)
+
+
+class DependencyTestCase(unittest.TestCase):
+    def test_dependency_from_tuple(self):
+        condition = "`relevant` == True"
+        value = None
+        output = Dependency(condition, value)
+        dependency = (condition, value)
+        task = task_factory(
+            'str',
+            'topic',
+            nullable=True,
+            dependencies=dependency
+        )
+        self.assertEqual(task.dependencies[0], output)
 
 
 if __name__ == '__main__':
