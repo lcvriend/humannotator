@@ -24,13 +24,14 @@ class AnnotationsTestCase(unittest.TestCase):
         self.instance = Annotations(tasks)
 
     def test_annotations_data(self):
-        columns = ['a', 'b', 'c', 'd', 'timestamp']
+        columns = ['a', 'b', 'c', 'd', 'timestamp', 'user']
         dtypes = {
             'a': 'object',
             'b': 'Int64',
             'c': 'float',
             'd': 'bool',
             'timestamp': 'datetime64[ns]',
+            'user': 'object',
         }
         data = pd.DataFrame(
             columns=columns
