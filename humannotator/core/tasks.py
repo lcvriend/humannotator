@@ -272,14 +272,14 @@ class Task_date(Task):
     kind = 'date'
     dtype = 'datetime64[ns]'
 
-    def __init__(self, format='%Y-%m-%d', *args, **kwargs):
+    def __init__(self, *args, format='%Y-%m-%d', **kwargs):
         super().__init__(*args, **kwargs)
         self.format = format
 
     def __call__(self, value):
         value = super().__call__(value)
         try:
-            value = datetime.strptime(value, format)
+            value = datetime.strptime(value, self.format)
         except ValueError:
             return Invalid(self.invalid)
         return value
