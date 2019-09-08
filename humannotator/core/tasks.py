@@ -33,7 +33,7 @@ class Task(Base):
     """
     Task
     ====
-    Defines a task.
+    Defines an annotation task.
     Validates its input.
 
     Attributes
@@ -51,9 +51,10 @@ class Task(Base):
         Instruction for the user.
     nullable : boolean, default False
         Whether the input can be null.
-    dependencies : list of Dependency objects, default None
-        Any dependencies associated with the task.
+    dependencies : list of dependencies, default None
+        Any dependencies associated with the task:
         - A dependency consists of a condition and a value.
+        - The condition should be a valid pandas query statement.
         - The interface will check the condition before prompting the user.
         - If the condition is met, the value will be automatically assigned.
     has_dependencies : boolean
@@ -310,6 +311,14 @@ def task_factory(kind, *args, **kwargs):
         Instruction to be displayed for this task.
     nullable : bool, default False
         If True then the annotation input can be None.
+    dependencies : dependency or list of dependencies, default None
+        A (list of) condition and value tuple(s) may also be passed.
+        Condition:
+        - should be a valid pandas query statement.
+        - will be evaluated on the current annotation record.
+        Value:
+        - should be of the correct dtype.
+        - will be assigned to the annotation task if the condition is True.
 
     Other parameters
     ----------------
