@@ -20,7 +20,9 @@ class Annotator(Base):
     - Provides an annotation interface
 
     Call to start annotating the data.
-    Pass a list of ids to the call to annotate only a subset of the data.
+    - Pass a list of ids to annotate only a subset of the data.
+    - Pass a user to change the user.
+    - Set redo to True, to reannotate previously annotated items..`
 
     Attributes
     ----------
@@ -104,23 +106,45 @@ class Annotator(Base):
         self.data = data
         self.save_data = save_data
 
-    def __call__(self, ids=None, **kwargs):
+    def __call__(self, ids=None, user=None, redo=False, **kwargs):
+        """Run the annotator.
+
+        Arguments
+        ---------
+        ids : list of ids, default None
+            A list of ids to annotate.
+            If none are passed than all ids are used.
+        user : str, default None
+            Name of the user to register the annotations under.
+            By default the user (if any) will be used that was passed
+            when instantiating the annotator.
+        redo : boolean, default False
+            Set to True to not skip previously annotated items.
+        """
+
+        if user:
+            self.user = user
         if self.data is None:
             return None
         kwargs.update(self.kwargs)
         if ids is None:
             ids = self.data.ids
-        self.ids = [
-            id for id in ids
-            if id not in self.annotations.data.index
-        ]
+
+        # skip annotated ids, unless redo is True
+        if not redo:
+            self.ids = [
+                id for id in ids
+                if id not in self.annotations.data.index
+            ]
+        else:
+            self.ids = ids
+
         interface = Interface(self, **kwargs)
         for i, id in enumerate(self.ids):
             self.i = i
             interface(id)
             if not interface.active:
                 break
-
 
     def __getstate__(self):
         state = self.__dict__.copy()
