@@ -1,4 +1,4 @@
-[ANNOTATOR]
+[ANNOTATOR][USER]
 [_line_]
 [_lbl_id_][ITEM_ID][INDEX_COUNT]
 [_lbl_item_]

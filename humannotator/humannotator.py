@@ -28,6 +28,8 @@ class Annotator(Base):
         Name of the annotator.
     data : data
         Data to be annotated.
+    user : str
+        Name of user.
     annotations : annotations
         Object containing:
         - Annotation tasks
@@ -42,6 +44,7 @@ class Annotator(Base):
         self,
         tasks,
         data=None,
+        user=None,
         name='HUMANNOTATOR',
         save_data=False,
         **kwargs
@@ -60,7 +63,9 @@ class Annotator(Base):
             then it will be passed through `load_data`.
             The annotator can be instantiated without data,
             but will only work after data is loaded.
-        name : str, default='HUMANNOTATOR'
+        user : str, default None
+            Name of the user.
+        name : str, default 'HUMANNOTATOR'
             Name of the annotator.
         save_data : boolean, default False
             Set flag to True if you want to store the data with the annotator.
@@ -93,6 +98,7 @@ class Annotator(Base):
         """
 
         self.kwargs = kwargs
+        self.user = user
         self.name = name
         self.annotations = tasks
         self.data = data

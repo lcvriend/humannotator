@@ -16,11 +16,12 @@ class Annotations(Base):
         self.tasks = tasks
         dtypes = {task.name:task.dtype for task in tasks}
         dtypes.update({'timestamp': 'datetime64[ns]'})
-        self.data = pd.concat(
-            [pd.DataFrame(columns=dtypes.keys()),
-            pd.DataFrame(columns=['timestamp'])],
-            sort=False,
-        ).astype(dtypes)
+        items = [
+            pd.DataFrame(columns=dtypes.keys()),
+            pd.DataFrame(columns=['timestamp']),
+            pd.DataFrame(columns=['user']),
+        ]
+        self.data = pd.concat(items, sort=False).astype(dtypes)
 
     @property
     def ntasks(self):
@@ -54,8 +55,10 @@ class Annotations(Base):
         df = convert_dtypes(df).select_dtypes(include=supported_dtypes)
         if 'timestamp' not in df.columns:
             df['timestamp'] = pd.Series(index=df.index, dtype='datetime64[ns]')
+        if 'user' not in df.columns:
+            df['user'] = None
         tasks = cls.tasks_from_df(
-            df.drop('timestamp', axis=1, errors='ignore'), **kwargs
+            df.drop(['timestamp', 'user'], axis=1, errors='ignore'), **kwargs
         )
         annotations = cls(tasks)
         annotations.data = df

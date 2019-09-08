@@ -28,6 +28,7 @@ JUPYTER = test_for_ipython()
 
 class ProtoDisplay(Base):
     Counter = element_factory(template_filename='_counter.txt')
+    User = element_factory(template_filename='_user.txt')
 
     def __init__(self, annotator, exit_instruction, *args, **kwargs):
         self.annotator = annotator
@@ -43,12 +44,15 @@ class ProtoDisplay(Base):
         ).render()
 
         self.layout_context = {
-            'annotator':  self.annotator.name,
-            'task_count': self.task_counter,
-            'task_name':  task.name,
-            'task_type':  task.kind,
-            'item_id':    id,
-            'error':      error if error else '',
+            'annotator':   self.annotator.name,
+            'user':        self.user,
+            'index_count': self.index_counter,
+            'task_count':  self.task_counter,
+            'task_name':   task.name,
+            'task_type':   task.kind,
+            'item_id':     id,
+            'instruction': task.instruction + self.exit,
+            'error':       error if error else '',
         }
 
     def format_items(self, items):
@@ -63,6 +67,12 @@ class ProtoDisplay(Base):
             count=self.annotator.i+1,
             total=len(self.annotator.ids)
         ).render()
+
+    @property
+    def user(self):
+        if self.annotator.user:
+            return self.User(user=self.annotator.user).render()
+        return ''
 
     @staticmethod
     def clear():
@@ -79,11 +89,10 @@ class DisplayJupyter(ProtoDisplay):
 
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
-        layout = self.Layout(
-            **self.layout_context,
+        self.layout_context.update(
             instruction=markdown(task.instruction + self.exit),
-            index_count=self.index_counter,
         )
+        layout = self.Layout(**self.layout_context)
         for items in self.data.items(id):
             layout(self.format_items(items))
         display(HTML(layout.render()))
@@ -96,13 +105,13 @@ class DisplayText(ProtoDisplay):
 
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
-        n_char = len(max(self.Layout._snippets.values(), key=len))
-        n_lbl  = len(self.Layout._snippets['_lbl_id_'])
-        layout = self.Layout(
-            **self.layout_context,
-            instruction=task.instruction + self.exit,
-            index_count=f"{self.index_counter:>{n_char-n_lbl-len(str(id))}}",
+        n_char   = len(max(self.Layout._snippets.values(), key=len))
+        n_lbl_id = len(self.Layout._snippets['_lbl_id_'])
+        self.layout_context.update(
+            index_count=f"{self.index_counter:>{n_char-n_lbl_id-len(str(id))}}",
+            user=f"{self.user:>{n_char-len(self.annotator.name)}}",
         )
+        layout = self.Layout(**self.layout_context)
         for items in self.data.items(id):
             layout(self.format_items(items))
         print(layout.render())

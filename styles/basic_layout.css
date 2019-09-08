@@ -10,6 +10,9 @@
 /* GRID AREAS */
 div.humannotator__name {
     grid-area: name;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: black;
     color: white;
     font-size: 1.5em;
@@ -58,6 +61,10 @@ div.humannotator__label {
     min-width: 8em;
     font-size: .8em;
     margin-right: 1em;
+}
+span.humannotator__user {
+    font-size: .8em;
+    font-weight: 400;
 }
 div.humannotator__task__format {
     font-family: 'Courier New', Courier, monospace;

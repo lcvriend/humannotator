@@ -20,6 +20,7 @@ class Interface(Base):
         self.annotations = annotator.annotations
         self.tasks = annotator.annotations.tasks
         self.data = annotator.annotations.data
+        self.user = annotator.user
         self.active = True
         self.kwargs = kwargs
 
@@ -42,17 +43,20 @@ class Interface(Base):
             error = None
             while True:
                 display(id, task, error=error)
-                user = input()
+                user_input = input()
                 display.clear()
-                if user == Exit.character:
+                if user_input == Exit.character:
                     self.data.drop(id, inplace=True, errors='ignore')
                     self.active = False
                     return None
-                user = task(user)
-                if not isinstance(user, Invalid):
+                user_input = task(user_input)
+                if not isinstance(user_input, Invalid):
                     break
-                error = user.message
-            self.annotations[(id, task.name)] = user
+                error = user_input.message
+            self.annotations[(id, task.name)] = user_input
+        else:
+            if self.user:
+                self.annotations[(id, 'user')] = self.user
         return None
 
 
