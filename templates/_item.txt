@@ -1,1 +1,1 @@
-[_tab_][LABEL]: [VALUE]
+[LABEL]: [VALUE]
