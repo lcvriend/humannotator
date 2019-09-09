@@ -17,7 +17,7 @@ def load_building_blocks(kind, suffix, language=None):
     blocks = dict()
     blocks_lang = dict()
     path = getattr(PATHS, kind)
-    patterns = dict.fromkeys(['*.txt', f"*{suffix}"]) # ordered set
+    patterns = dict.fromkeys(['*.txt', f"*{suffix}", f"*.js"]) # ordered set
     for pattern in patterns:
         for file in path.glob(pattern):
             if file.stem.endswith(f"-{language}"):
@@ -67,7 +67,7 @@ def element_factory(
         cls_name  = cls_name
     else:
         raise ValueError(
-            "Arguments missing:"
+            "Arguments missing: "
             "use either `template_filename` or `template_string`."
         )
 

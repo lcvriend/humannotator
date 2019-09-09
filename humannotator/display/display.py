@@ -1,29 +1,20 @@
 # standard library
 import os
-import re
 from collections.abc import Mapping
-from itertools import cycle
-from unicodedata import normalize
 
 # third party
 from markdown import markdown
 from IPython.display import HTML, display, clear_output
 
 # local
-from humannotator.config import CSS
-from humannotator.utils import Base
 from humannotator.display.elements import element_factory
-
-
-def test_for_ipython():
-    try:
-        get_ipython()
-        return True
-    except NameError:
-        return False
-
-
-JUPYTER = test_for_ipython()
+from humannotator.display.tools import (
+    Highlighter,
+    TruncaterJupyter,
+    TruncaterText,
+    normalize,
+)
+from humannotator.utils import Base, JUPYTER
 
 
 class ProtoDisplay(Base):
@@ -34,7 +25,7 @@ class ProtoDisplay(Base):
         self.annotator = annotator
         self.data = annotator.data
         self.exit = exit_instruction
-        self.highlighter = Highlighter(self.Highlight, *args, **kwargs)
+        self.highlight = Highlighter(self.Highlight, *args, **kwargs)
         self.kwargs = kwargs
 
     def __call__(self, id, task, error=None):
@@ -57,6 +48,7 @@ class ProtoDisplay(Base):
 
     def format_item(self, label, value):
         label  = normalize(label)
+        value  = self.highlight(self.truncate(normalize(value)))
         kwargs = dict(label=label, value=value)
         return self.Item(**kwargs)
 
@@ -85,6 +77,7 @@ class DisplayJupyter(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.html')
     Item      = element_factory(template_filename='_item.html')
     Highlight = element_factory(template_filename='_highlight.html')
+    truncate  = TruncaterJupyter()
 
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
@@ -102,13 +95,19 @@ class DisplayText(ProtoDisplay):
     Item      = element_factory(template_filename='_item.txt')
     Highlight = element_factory(template_filename='_highlight.txt')
 
+    n_char    = len(max(Layout._snippets.values(), key=len))
+    n_lbl_id  = len(Layout._snippets['_lbl_id_'])
+
+    truncate  = TruncaterText(length=n_char)
+
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
-        n_char   = len(max(self.Layout._snippets.values(), key=len))
-        n_lbl_id = len(self.Layout._snippets['_lbl_id_'])
+        indent_index = self.n_char - self.n_lbl_id - len(str(id))
+        indent_user  = self.n_char - len(self.annotator.name)
+
         self.layout_context.update(
-            index_count=f"{self.index_counter:>{n_char-n_lbl_id-len(str(id))}}",
-            user=f"{self.user:>{n_char-len(self.annotator.name)}}",
+            index_count=f"{self.index_counter:>{indent_index}}",
+            user=f"{self.user:>{indent_user}}",
         )
         layout = self.Layout(**self.layout_context)
         for label, item in self.data.record(id):
@@ -122,41 +121,3 @@ class Display(ProtoDisplay):
             if JUPYTER:
                 return DisplayJupyter(*args, **kwargs)
         return DisplayText(*args, **kwargs)
-
-
-class Highlighter(Base):
-    styles = CSS.highlight,
-
-    def __init__(self, template, phrases=None, escape=False, flags=0):
-        self.template = template
-        self.escape   = escape
-        self.flags    = flags
-        self.phrases  = phrases
-
-    def __call__(self, item):
-        if self.phrases is None:
-            return item
-        for phrase, style in self.phrases.items():
-            phrase = re.escape(phrase) if self.escape else phrase
-            matches = re.findall(phrase, item, flags=self.flags)
-            for match in matches:
-                context = {'text': match}
-                if 'style' in self.template._fields:
-                    context['style'] = style
-                item = item.replace(match, self.template(**context).render())
-        return item
-
-    @property
-    def phrases(self):
-        return self._phrases
-
-    @phrases.setter
-    def phrases(self, phrases):
-        if phrases is None:
-            self._phrases = None
-        else:
-            if isinstance(phrases, str):
-                phrases = [phrases]
-            if phrases is not Mapping:
-                phrases = dict(zip(phrases, cycle(*self.styles)))
-            self._phrases = phrases

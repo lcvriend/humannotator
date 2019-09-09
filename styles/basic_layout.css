@@ -78,3 +78,35 @@ div.humannotator__task__name {
     padding: 1px 8px;
     border-radius: 2px;
 }
+/* EXPANDABLE */
+.humannotator__expandable,
+.humannotator__content {
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font: inherit;
+}
+button.humannotator__expandable,
+button.humannotator__content {
+    padding: 0;
+}
+.humannotator__expandable:after {
+    content: '+';
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+.humannotator__active:after {
+    content: "-";
+}
+.humannotator__expandable:hover {
+    background-color: rgba(176, 196, 222, 0.5);
+}
+.humannotator__content {
+    display: none;
+    overflow: hidden;
+}
