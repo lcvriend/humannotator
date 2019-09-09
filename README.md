@@ -56,6 +56,7 @@ and you are looking for a solution that is:
 - Use the annotator by calling it: `annotator()`.
 - The annotator keeps track of where you were.
 - Highlight phrases with the 'phrases' argument.
+- The annotator stores user and timestamp with the annotation.
 
 ### Access your annotations
 
@@ -133,12 +134,84 @@ If the query evaluates to True then the value will be assigned automatically.
 
 ## Annotator
 
+### Calling the annotator
+
 The annotator detects if it is run from Jupyter.
 If so, the annotator will render itself in html and css.
 If not, the annotator will render itself as text.
-You can force the annotator to render to text.
-Set `text_display` to True when instantiating or calling.
+You can annotate a selection of records by passing a list of ids to the annotator call. If you want to reannotate ids that have already been annotated, then set `redo` to True when calling the annotator.
 
-If you want to:
-- Only annotate specific records, pass a list of ids to the annotator call.
-- Pickle the data with the annotator, set the `save_data` flag to True.
+### Instantiating the annotator
+
+> arguments
+> ---------
+> tasks : *task, list of task or DataFrame*  
+>
+>     Annotation task(s).
+>     If passed a DataFrame, then the tasks will be inferred from it.
+>     Annotation data in the dataframe will also be initialized.
+>
+> data : *data, list-/dict-like, Series or DataFrame, default None*  
+>
+>     Data to be annotated.
+>     If `data` is not already a data object,
+>     then it will be passed through `load_data`.
+>     The annotator can be instantiated without data,
+>     but will only work after data is loaded.
+>
+> user : *str, default None*  
+>
+>     Name of the user.
+>
+> name : *str, default 'HUMANNOTATOR'*  
+>
+>     Name of the annotator.
+> save_data : *boolean, default False*  
+>
+>     Set flag to True if you want to store the data with the annotator.
+>     This will ensure that the pickled object, will contain the data.
+> 
+> other parameters
+> ----------------
+> **DISPLAY**  
+> text_display : *boolean, default None*  
+>
+>     If True will display the annotator in plain text instead of html.
+> 
+> **DATA**  
+> item_cols : *str or list of str, default None*  
+>
+>     Name(s) of dataframe column(s) to display when annotating.
+>     By default: display all columns.
+>
+> id_col : *str, default None*  
+>
+>     Name of dataframe column to use as index.
+>     By default: use the dataframe's index.
+> 
+> **HIGHLIGHTER**  
+> phrases : *str, list of str, default None*  
+>
+>     Phrases to highlight in the display.
+>     The phrases can be regexes.
+>     It also to pass in a dict where:
+>     - the keys are the phrases
+>     - the values are the css styling
+>
+> escape : *boolean, default False*  
+>
+>     Set escape to True in order to escape the phrases.
+>
+> flags : *int, default 0 (no flags)*  
+>
+>     Flags to pass through to the re module, e.g. re.IGNORECASE.
+> 
+> **TRUNCATER**  
+> truncate : *boolean, default True*  
+>
+>     Set to False to not truncate items.
+>
+> trunc_limit : *int, default 32*  
+>
+>     The number of words beyond which an item will be truncated.
+>
