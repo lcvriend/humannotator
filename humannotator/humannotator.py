@@ -127,6 +127,8 @@ class Annotator(Base):
         if self.data is None:
             return None
         kwargs.update(self.kwargs)
+        if isinstance(ids, (str, int)):
+            ids = [ids]
         if ids is None:
             ids = self.data.ids
 
