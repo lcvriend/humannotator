@@ -35,9 +35,13 @@ class TruncaterText(Truncater):
     def __init__(self, length):
         self.length = length
 
-    def __call__(self, value, **kwargs):
-        value, _ = super().__call__(value, **kwargs)
-        return value
+        return '\n'.join(
+            wrap(
+                value,
+                width=self.width,
+                initial_indent=' '*(len(label)+2),
+                subsequent_indent=self.tab),
+        ).strip()
 
 
 class Highlighter(Base):
