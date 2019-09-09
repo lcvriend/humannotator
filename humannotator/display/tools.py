@@ -80,4 +80,6 @@ class Highlighter(Base):
 
 
 def normalize(value):
-    return unicodedata.normalize('NFKD', str(value))
+    if JUPYTER:
+        value = value.replace('$', '\$')
+    return unicodedata.normalize('NFKC', str(value))
