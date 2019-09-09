@@ -43,23 +43,24 @@ class TruncaterText(Truncater):
 class Highlighter(Base):
     styles = CSS.highlight,
 
-    def __init__(self, template, phrases=None, escape=False, flags=0):
+    def __init__(self, template, phrases=None, escape=False, flags=0, **kwargs):
         self.template = template
         self.escape   = escape
         self.flags    = flags
         self.phrases  = phrases
 
     def __call__(self, item):
+        def marker(match):
+            context = {'text': match[0]}
+            if 'style' in self.template._fields:
+                context['style'] = style
+            return self.template(**context).render()
+
         if self.phrases is None:
             return item
         for phrase, style in self.phrases.items():
             phrase = re.escape(phrase) if self.escape else phrase
-            matches = re.findall(phrase, item, flags=self.flags)
-            for match in set(matches):
-                context = {'text': match}
-                if 'style' in self.template._fields:
-                    context['style'] = style
-                item = item.replace(match, self.template(**context).render())
+            item = re.sub(phrase, marker, item, flags=self.flags)
         return item
 
     @property
