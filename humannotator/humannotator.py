@@ -75,14 +75,19 @@ class Annotator(Base):
 
         other parameters
         ----------------
-        text_display : bool, default None
+        DISPLAY
+        text_display : boolean, default None
             If True will display the annotator in plain text instead of html.
+
+        DATA
         item_cols : str or list of str, default None
             Name(s) of dataframe column(s) to display when annotating.
             By default: display all columns.
         id_col : str, default None
             Name of dataframe column to use as index.
             By default: use the dataframe's index.
+
+        HIGHLIGHTER
         phrases : str, list of str, default None
             Phrases to highlight in the display.
             The phrases can be regexes.
@@ -93,6 +98,12 @@ class Annotator(Base):
             Set escape to True in order to escape the phrases.
         flags : int, default 0 (no flags)
             Flags to pass through to the re module, e.g. re.IGNORECASE.
+
+        TRUNCATER
+        truncate : boolean, default True
+            Set to False to not truncate items.
+        trunc_limit : int,
+            The number of words beyond which an item will be truncated.
 
         returns
         -------
