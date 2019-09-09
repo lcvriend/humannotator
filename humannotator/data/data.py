@@ -27,7 +27,7 @@ class Data(Base):
     def __getitem__(self, id):
         return self.data[id]
 
-    def items(self, id):
+    def record(self, id):
         return [('item', self[id])]
 
 
@@ -66,8 +66,8 @@ class Data_DataFrame(Data):
         super().__init__(data, **kwargs)
         if id_col:
             self.data = self.data.set_index(id_col)
-        if not item_cols:
-            item_cols = data.columns
+        if item_cols is None:
+            item_cols = self.data.columns
         elif not isinstance(item_cols, list):
             item_cols = [item_cols]
         self.item_cols = item_cols
@@ -76,7 +76,7 @@ class Data_DataFrame(Data):
     def __getitem__(self, id):
         return self.data.loc[id, self.item_cols]
 
-    def items(self, id):
+    def record(self, id):
         return self[id].items()
 
 

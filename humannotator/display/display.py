@@ -55,11 +55,10 @@ class ProtoDisplay(Base):
             'error':       error if error else '',
         }
 
-    def format_items(self, items):
-        items = (normalize('NFKD', str(item)) for item in items)
-        kwargs = dict(zip(['label', 'value'], items))
-        kwargs['value'] = self.highlighter(kwargs['value'])
-        return self.Items(**kwargs)
+    def format_item(self, label, value):
+        label  = normalize(label)
+        kwargs = dict(label=label, value=value)
+        return self.Item(**kwargs)
 
     @property
     def index_counter(self):
@@ -84,7 +83,7 @@ class ProtoDisplay(Base):
 
 class DisplayJupyter(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.html')
-    Items     = element_factory(template_filename='_item.html')
+    Item      = element_factory(template_filename='_item.html')
     Highlight = element_factory(template_filename='_highlight.html')
 
     def __call__(self, id, task, **kwargs):
@@ -93,14 +92,14 @@ class DisplayJupyter(ProtoDisplay):
             instruction=markdown(task.instruction + self.exit),
         )
         layout = self.Layout(**self.layout_context)
-        for items in self.data.items(id):
-            layout(self.format_items(items))
+        for label, item in self.data.record(id):
+            layout(self.format_item(label, item))
         display(HTML(layout.render()))
 
 
 class DisplayText(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.txt')
-    Items     = element_factory(template_filename='_item.txt')
+    Item      = element_factory(template_filename='_item.txt')
     Highlight = element_factory(template_filename='_highlight.txt')
 
     def __call__(self, id, task, **kwargs):
@@ -112,8 +111,8 @@ class DisplayText(ProtoDisplay):
             user=f"{self.user:>{n_char-len(self.annotator.name)}}",
         )
         layout = self.Layout(**self.layout_context)
-        for items in self.data.items(id):
-            layout(self.format_items(items))
+        for label, item in self.data.record(id):
+            layout(self.format_item(label, item))
         print(layout.render())
 
 
