@@ -1,4 +1,5 @@
 # standard library
+import html
 import os
 from collections.abc import Mapping
 
@@ -26,7 +27,6 @@ class ProtoDisplay(Base):
         self.data = annotator.data
         self.exit = exit_instruction
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
-        self.kwargs = kwargs
 
     def __call__(self, id, task, error=None):
         self.task_counter = self.Counter(
@@ -45,12 +45,6 @@ class ProtoDisplay(Base):
             'instruction': task.instruction + self.exit,
             'error':       error if error else '',
         }
-
-    def format_item(self, label, value):
-        label  = normalize(label)
-        value  = self.highlight(self.truncate(normalize(value)))
-        kwargs = dict(label=label, value=value)
-        return self.Item(**kwargs)
 
     @property
     def index_counter(self):
@@ -77,7 +71,10 @@ class DisplayJupyter(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.html')
     Item      = element_factory(template_filename='_item.html')
     Highlight = element_factory(template_filename='_highlight.html')
-    truncate  = TruncaterJupyter()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.truncate = TruncaterJupyter(**kwargs)
 
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
@@ -89,16 +86,28 @@ class DisplayJupyter(ProtoDisplay):
             layout(self.format_item(label, item))
         display(HTML(layout.render()))
 
+    def format_item(self, label, value):
+        label  = normalize(label)
+        value  = self.highlight(self.truncate(html.escape(normalize(value))))
+        kwargs = dict(label=label, value=value)
+        return self.Item(**kwargs)
+
 
 class DisplayText(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.txt')
     Item      = element_factory(template_filename='_item.txt')
     Highlight = element_factory(template_filename='_highlight.txt')
 
-    n_char    = len(max(Layout._snippets.values(), key=len))
+    n_char    = len(Layout._snippets['_line_'])
     n_lbl_id  = len(Layout._snippets['_lbl_id_'])
 
-    truncate  = TruncaterText(length=n_char)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.truncate = TruncaterText(
+            length=self.n_char,
+            tab=self.Layout._snippets['_tab_'],
+            **kwargs
+        )
 
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
@@ -113,6 +122,12 @@ class DisplayText(ProtoDisplay):
         for label, item in self.data.record(id):
             layout(self.format_item(label, item))
         print(layout.render())
+
+    def format_item(self, label, value):
+        label  = normalize(label)
+        value  = self.truncate(self.highlight(value), label)
+        kwargs = dict(label=label, value=value)
+        return self.Item(**kwargs)
 
 
 class Display(ProtoDisplay):

@@ -4,6 +4,7 @@ import re
 import unicodedata
 from collections.abc import Mapping
 from itertools import cycle
+from textwrap import wrap
 
 # local
 from humannotator.config import CSS
@@ -12,11 +13,17 @@ from humannotator.display.elements import element_factory
 
 
 class Truncater(Base):
-    def __call__(self, value, limit=32):
+    def __init__(self, truncate=True, trunc_limit=32, **kwargss):
+        self.active = truncate
+        self.limit = trunc_limit
+
+    def __call__(self, value):
+        if not self.active:
+            return value, None
         bag = value.split()
-        if len(bag) > limit:
-            show = ' '.join(bag[:73]) + ' [...]'
-            hide = '[...] ' + ' '.join(bag[73:])
+        if len(bag) > self.limit:
+            show = ' '.join(bag[:self.limit]) + ' [...]'
+            hide = '[...] ' + ' '.join(bag[self.limit:])
             return show, hide
         return value, None
 
@@ -24,17 +31,21 @@ class Truncater(Base):
 class TruncaterJupyter(Truncater):
     Expandable = element_factory(template_filename='_expandable.html')
 
-    def __call__(self, value, **kwargs):
-        show, hide = super().__call__(value, **kwargs)
+    def __call__(self, value):
+        show, hide = super().__call__(value)
         if hide is not None:
             return self.Expandable(show=show, hide=hide).render()
         return show
 
 
 class TruncaterText(Truncater):
-    def __init__(self, length):
-        self.length = length
+    def __init__(self, length, tab, **kwargs):
+        super().__init__(**kwargs)
+        self.width = length - len(tab)
+        self.tab = tab
 
+    def __call__(self, value, label):
+        value, _ = super().__call__(value)
         return '\n'.join(
             wrap(
                 value,
