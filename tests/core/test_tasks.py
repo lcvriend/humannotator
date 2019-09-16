@@ -61,7 +61,11 @@ class TaskCategoryTestCase(unittest.TestCase):
 
     def test_instruction(self):
         categories = zip('1 2 3'.split(), 'x y z'.split())
-        instruction = ''.join(option(i, c) for i, c in categories)
+        instruction = (
+            '  \n' +
+            ''.join(option(i, c) for i, c in categories) +
+            '  \n'
+        )
         self.assertEqual(instruction, self.task.instruction)
 
     def test_equality_with_task_from_iterable(self):
