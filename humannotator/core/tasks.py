@@ -350,6 +350,8 @@ def task_factory(kind, *args, **kwargs):
         Task will be created from list-/dict-like and categories are ignored.
     """
 
+    if type(kind) == type:
+        kind = kind.__name__
     if isinstance(kind, str):
         if kind not in registry:
             raise KeyError(
