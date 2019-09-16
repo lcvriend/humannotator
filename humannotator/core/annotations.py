@@ -156,9 +156,14 @@ class Tasks(Base):
         if tasks is None:
             self._tasks = {}
         else:
-            if not isinstance(tasks, list):
+            if isinstance(tasks, Task):
                 tasks = [tasks]
-            self._tasks = {task.name:task for task in tasks}
+            if isinstance(tasks, list):
+                assert all(isinstance(i, Task) for i in tasks)
+                self._tasks = {task.name:task for task in tasks}
+            else:
+                assert all(isinstance(v, Task) for v in tasks.values())
+                self._tasks = tasks
             self._set_pos_in_tasks()
 
     @property
