@@ -6,9 +6,9 @@ import pandas as pd
 
 # local
 from humannotator.utils import Base
-from humannotator.data.data import Data, load_data
 from humannotator.interface import Interface
 from humannotator.core.annotations import Annotations
+from humannotator.core.data import Data, load_data
 
 
 class Annotator(Base):
