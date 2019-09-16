@@ -19,5 +19,7 @@ var i;
 for (i = 0; i < collapser.length; i++) {
     collapser[i].addEventListener("click", function() {
         this.style.display = "none";
+        var content = this.previousElementSibling;
+        content.classList.toggle("humannotator__active");
     }
 )};
