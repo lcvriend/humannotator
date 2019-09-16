@@ -44,7 +44,7 @@ class Annotator(Base):
 
     def __init__(
         self,
-        tasks,
+        tasks=None,
         data=None,
         user=None,
         name='HUMANNOTATOR',
@@ -114,6 +114,7 @@ class Annotator(Base):
         self.user = user
         self.name = name
         self.annotations = tasks
+        self.tasks = self.annotations.tasks
         self.data = data
         self.save_data = save_data
 
