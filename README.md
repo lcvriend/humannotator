@@ -56,7 +56,7 @@ and you are looking for a solution that is:
 - Use the annotator by calling it: `annotator()`.
 - The annotator keeps track of where you were.
 - Highlight phrases with the 'phrases' argument.
-- The annotator stores user and timestamp with the annotation.
+- The annotator stores user (if provided) and timestamp with the annotation.
 
 ### Access your annotations
 
@@ -108,6 +108,20 @@ Typically:
 Passing a dict or list to `kind` will create a categorical task.  
 In this case the `categories` kwarg is ignored.
 
+### Setting up tasks through subscription
+
+It is also possible to instantiate an annotator and add tasks through subscription:  
+
+```Python
+    a = Annotator()
+    a.tasks['topic'] = ['economy', 'politics', 'media', 'other']
+    a.tasks['factual'] = bool, "Is the article factual?", False
+```
+
+To add a task like this, you minimally need to provide the `kind` of task you are trying to create.
+Optionally, you can add `instruction`, `nullability`, `dependencies` and any other kwargs (as dictionary).
+Change the order in which tasks are prompted to the user with the `order` attribute on `tasks`.
+
 ### Available tasks
 
 kind      | kwargs     | dtype            | description
@@ -145,7 +159,7 @@ You can annotate a selection of records by passing a list of ids to the annotato
 
 > arguments
 > ---------
-> tasks : *task, list of task or DataFrame*  
+> tasks : *task, list of task or DataFrame, default None*  
 >
 >     Annotation task(s).
 >     If passed a DataFrame, then the tasks will be inferred from it.
