@@ -29,6 +29,23 @@ class TaskFactoryTestCase(unittest.TestCase):
         self.assertEqual(task.dtype, 'Int64')
 
 
+class TaskTestCase(unittest.TestCase):
+    def test_quality(self):
+        task1 = task_factory('int', 'a')
+        task2 = task_factory('int', 'a')
+        self.assertEqual(task1, task2)
+
+    def test_inequality_dtype(self):
+        task1 = task_factory('int', 'a')
+        task2 = task_factory('str', 'a')
+        self.assertNotEqual(task1, task2)
+
+    def test_inequality_name(self):
+        task1 = task_factory('int', 'a')
+        task2 = task_factory('int', 'b')
+        self.assertNotEqual(task1, task2)
+
+
 class TaskCategoryTestCase(unittest.TestCase):
     def setUp(self):
         self.task = task_factory('category', 'a', categories=['x', 'y', 'z'])
