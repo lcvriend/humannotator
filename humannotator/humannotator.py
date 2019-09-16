@@ -146,19 +146,14 @@ class Annotator(Base):
 
         # skip annotated ids, unless redo is True
         if not redo:
-            self.ids = [
+            ids = [
                 id for id in ids
                 if id not in self.annotations.data.index
             ]
-        else:
-            self.ids = ids
 
         interface = Interface(self, **kwargs)
-        for i, id in enumerate(self.ids):
-            self.i = i
-            interface(id)
-            if not interface.active:
-                break
+        interface(ids)
+
 
     def __getstate__(self):
         state = self.__dict__.copy()

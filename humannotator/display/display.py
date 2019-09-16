@@ -22,8 +22,9 @@ class ProtoDisplay(Base):
     Counter = element_factory(template_filename='_counter.txt')
     User = element_factory(template_filename='_user.txt')
 
-    def __init__(self, annotator, exit_instruction, *args, **kwargs):
+    def __init__(self, annotator, interface, exit_instruction, *args, **kwargs):
         self.annotator = annotator
+        self.interface = interface
         self.data = annotator.data
         self.exit = exit_instruction
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
@@ -49,8 +50,8 @@ class ProtoDisplay(Base):
     @property
     def index_counter(self):
         return self.Counter(
-            count=self.annotator.i+1,
-            total=len(self.annotator.ids)
+            count=self.interface.i+1,
+            total=len(self.interface.ids)
         ).render()
 
     @property
