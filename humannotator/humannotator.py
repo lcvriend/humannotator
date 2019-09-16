@@ -216,7 +216,7 @@ class Annotator(Base):
         a = self.annotated.copy()
         d.columns = pd.MultiIndex.from_product([['DATA'], d.columns])
         a.columns = pd.MultiIndex.from_product([['ANNOTATIONS'], a.columns])
-        return d.merge(a, left_index=True, right_index=True)
+        return d.merge(a, how='left', left_index=True, right_index=True)
 
     def save(self, filename):
         "Save the annotator with the pickle protocol. "
