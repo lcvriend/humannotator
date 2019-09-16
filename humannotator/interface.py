@@ -19,7 +19,6 @@ class Interface(Base):
         self.annotator = annotator
         self.annotations = annotator.annotations
         self.tasks = annotator.annotations.tasks
-        self.data = annotator.annotations.data
         self.user = annotator.user
         self.active = True
         self.kwargs = kwargs
@@ -32,7 +31,7 @@ class Interface(Base):
             if task.has_dependencies:
                 check = False
                 for i in task.dependencies:
-                    if not self.data.loc[[id]].query(i.condition).empty:
+                    if not self.annotations.data.loc[[id]].query(i.condition).empty:
                         self.annotations[(id, task.name)] = i.value
                         check = True
                         break
@@ -46,7 +45,9 @@ class Interface(Base):
                 user_input = input()
                 display.clear()
                 if user_input == Exit.character:
-                    self.data.drop(id, inplace=True, errors='ignore')
+                    self.annotations.data.drop(
+                        id, inplace=True, errors='ignore'
+                    )
                     self.active = False
                     return None
                 user_input = task(user_input)
