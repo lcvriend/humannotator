@@ -1,5 +1,6 @@
 # local
 import re
+import textwrap
 from collections.abc import Mapping
 from datetime import datetime
 from warnings import warn
@@ -68,26 +69,27 @@ class Task(Base):
         instruction=None,
         nullable=False,
         dependencies=None,
-        **kwargs,
     ):
 
-        self.name = name
-        self.nullable = nullable
-        self.instruction = instruction
+        self.name         = name
+        self.instruction  = instruction
+        self.nullable     = nullable
         self.dependencies = dependencies
 
     @property
     def instruction(self):
+        instruction = self._instruction
+        if self._instruction is None or self._instruction != self._instruction:
+            instruction = ''
+        if hasattr(self, 'items'):
+            instruction += '  \n' + self.items
         if self.nullable:
-            return self._instruction + Null.instruction
-        return self._instruction
+            return instruction + Null.instruction + '  \n'
+        return instruction + '  \n'
 
     @instruction.setter
     def instruction(self, value):
-        if value is None or value != value:
-            self._instruction = ''
-        else:
-            self._instruction = value + '  \n'
+        self._instruction = value
 
     @property
     def invalid(self):
@@ -149,6 +151,13 @@ class Task(Base):
             return this == that
         return NotImplemented
 
+    def __str__(self):
+        return (
+            f"name: {textwrap.shorten(self.name, width=20):<21} | "
+            f"kind: {self.kind:<16} | "
+            f"null: {self.nullable:<6} | "
+            f"has_dependencies: {self.has_dependencies}"
+        )
 
 @register
 class Task_str(Task):
@@ -171,8 +180,8 @@ class Task_regex(Task):
     dtype = 'object'
 
     def __init__(self, *args, regex, flags=0, **kwargs):
-        super().__init__(*args, **kwargs)
         self.regex = re.compile(regex, flags=flags)
+        super().__init__(*args, **kwargs)
 
     @property
     def invalid(self):
@@ -227,11 +236,7 @@ class Task_bool(Task):
             '1': 'True',
             '0': 'False',
         }
-        items = ''.join(option(i,c) for i, c in states.items())
-        if self._instruction:
-            self._instruction = self._instruction + items
-        else:
-            self._instruction = items
+        self.items = ''.join(option(i,c) for i, c in states.items())
 
     def __call__(self, value):
         value = super().__call__(value)
@@ -249,16 +254,12 @@ class Task_category(Task):
     dtype = 'category'
 
     def __init__(self, *args, categories=None, **kwargs):
-        super().__init__(*args, **kwargs)
         if not isinstance(categories, Mapping):
             categories = {str(i):c for i, c in enumerate(categories, start=1)}
         self.categories = categories
         self.dtype = CategoricalDtype(self.categories.values(), ordered=None)
-        items = ''.join(option(i,c) for i, c in categories.items())
-        if self._instruction:
-            self._instruction = self._instruction + items
-        else:
-            self._instruction = items
+        self.items = ''.join(option(i,c) for i, c in categories.items())
+        super().__init__(*args, **kwargs)
 
     @property
     def invalid(self):
