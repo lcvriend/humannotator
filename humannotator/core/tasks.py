@@ -141,7 +141,12 @@ class Task(Base):
 
     def __eq__(self, other):
         if isinstance(other, Task):
-            return self.__dict__ == other.__dict__
+            keys = ['pos', 'of']
+            this = {k:v for k,v in self.__dict__.items() if k not in keys}
+            that = {k:v for k,v in other.__dict__.items() if k not in keys}
+            this.update(dtype=self.dtype)
+            that.update(dtype=other.dtype)
+            return this == that
         return NotImplemented
 
 
