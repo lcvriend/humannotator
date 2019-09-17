@@ -1,14 +1,15 @@
 from setuptools import setup
 
+with open("README.md", "r") as f:
+    long_description = f.read()
+
 setup(
     name='humannotator',
-    version='0.1',
+    version='0.0.1',
     description='Library for building custom annotation tools',
-    long_description=(
-        "Library for building customizable and lightweight tools "
-        "for manual annotation that integrate nicely into "
-        "Jupyter and pandas."
-    ),
+    long_description=open('README.md').read(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
@@ -24,7 +25,9 @@ setup(
     packages=['humannotator'],
     install_requires=[
         'pandas',
+        'markdown',
     ],
     include_package_data=True,
     zip_safe=False,
+    python_requires='>=3.6',
 )
