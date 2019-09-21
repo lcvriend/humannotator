@@ -12,6 +12,60 @@ from humannotator.utils import Base, JUPYTER
 from humannotator.display.elements import element_factory
 
 
+class Annotated(Base):
+    def __init__(self, annotation):
+        self.annotation = annotation
+
+    @property
+    def user(self):
+        return self.annotation.user
+
+    @property
+    def timestamp(self):
+        return self.annotation.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
+    @property
+    def data(self):
+        return self.annotation.drop(['user', 'timestamp'])
+
+
+class AnnotatedText(Annotated):
+    Annotation = element_factory(template_filename='_annotation.txt')
+
+    def render(self):
+        if not self.annotation.empty:
+            return self.Annotation(
+                user=self.user,
+                timestamp=self.timestamp,
+                annotation=self.data.to_string(),
+            ).render()
+        else:
+            return ''
+
+
+class AnnotatedJupyter(Annotated):
+    Annotation = element_factory(template_filename='_annotation.html')
+    Item       = element_factory(template_filename='_item.html')
+
+    def render(self):
+        if not self.annotation.empty:
+            annotated = self.Annotation()
+            for label, item in self.data.iteritems():
+                annotated(self.format_item(label, item))
+            user_label = self.Annotation._snippets['_lbl_user_']
+            ts_label = self.Annotation._snippets['_lbl_timestamp_']
+            user = self.format_item(label=user_label, value=self.user)
+            timestamp = self.format_item(label=ts_label, value=self.timestamp)
+            annotated(user)
+            annotated(timestamp)
+            return annotated.render()
+        else:
+            return ''
+
+    def format_item(self, label, value):
+        return self.Item(label=label, value=value)
+
+
 class Truncater(Base):
     def __init__(self, truncate=True, trunc_limit=32, **kwargss):
         self.active = truncate

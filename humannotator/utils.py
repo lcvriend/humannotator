@@ -11,9 +11,10 @@ class Base(object):
         return f"{self.__class__.__name__}({', '.join(items)})"
 
 
-def option(character, instruction):
-    return f"[{character}] - {instruction}  \n"
-
+def option(character, instruction, newline=True):
+    if newline:
+        return f"[{character}] - {instruction}  \n"
+    return f"[{character}] - {instruction}"
 
 def test_for_ipython():
     try:

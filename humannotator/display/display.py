@@ -4,12 +4,15 @@ import os
 from collections.abc import Mapping
 
 # third party
+import pandas as pd
 from markdown import markdown
 from IPython.display import HTML, display, clear_output
 
 # local
 from humannotator.display.elements import element_factory
 from humannotator.display.tools import (
+    AnnotatedJupyter,
+    AnnotatedText,
     Highlighter,
     TruncaterJupyter,
     TruncaterText,
@@ -22,11 +25,11 @@ class ProtoDisplay(Base):
     Counter = element_factory(template_filename='_counter.txt')
     User = element_factory(template_filename='_user.txt')
 
-    def __init__(self, annotator, interface, exit_instruction, *args, **kwargs):
+    def __init__(self, annotator, interface, nav_instruction, *args, **kwargs):
         self.annotator = annotator
         self.interface = interface
         self.data = annotator.data
-        self.exit = exit_instruction
+        self.nav = nav_instruction
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
 
     def __call__(self, id, task, error=None):
@@ -34,6 +37,14 @@ class ProtoDisplay(Base):
             count=task.pos+1,
             total=task.of
         ).render()
+
+        if not self.interface.active:
+            try:
+                self.annotation = self.annotator.annotated.loc[id]
+            except KeyError:
+                self.annotation = pd.Series()
+        else:
+            self.annotation = pd.Series()
 
         self.layout_context = {
             'annotator':   self.annotator.name,
@@ -43,7 +54,7 @@ class ProtoDisplay(Base):
             'task_name':   task.name,
             'task_type':   task.kind,
             'item_id':     id,
-            'instruction': task.instruction + self.exit,
+            'instruction': task.instruction + self.nav,
             'error':       error if error else '',
         }
 
@@ -80,7 +91,8 @@ class DisplayJupyter(ProtoDisplay):
     def __call__(self, id, task, **kwargs):
         super().__call__(id, task, **kwargs)
         self.layout_context.update(
-            instruction=markdown(task.instruction + self.exit),
+            instruction=markdown(task.instruction + self.nav),
+            annotation=AnnotatedJupyter(self.annotation).render()
         )
         layout = self.Layout(**self.layout_context)
         for label, item in self.data.record(id):
@@ -104,6 +116,10 @@ class DisplayText(ProtoDisplay):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.layout_context.update(
+            instruction=markdown(task.instruction + self.exit),
+            annotation=AnnotatedText(self.annotation).render()
+        )
         self.truncate = TruncaterText(
             length=self.n_char,
             tab=self.Layout._snippets['_tab_'],
