@@ -114,10 +114,13 @@ class DisplayText(ProtoDisplay):
     n_char    = len(Layout._snippets['_line_'])
     n_lbl_id  = len(Layout._snippets['_lbl_id_'])
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __call__(self, id, task, **kwargs):
+        super().__call__(id, task, **kwargs)
+        indent_index = self.n_char - self.n_lbl_id - len(str(id))
+        indent_user  = self.n_char - len(self.annotator.name)
+
         self.layout_context.update(
-            instruction=markdown(task.instruction + self.exit),
+            instruction=task.instruction + self.nav,
             annotation=AnnotatedText(self.annotation).render()
         )
         self.truncate = TruncaterText(
@@ -125,12 +128,6 @@ class DisplayText(ProtoDisplay):
             tab=self.Layout._snippets['_tab_'],
             **kwargs
         )
-
-    def __call__(self, id, task, **kwargs):
-        super().__call__(id, task, **kwargs)
-        indent_index = self.n_char - self.n_lbl_id - len(str(id))
-        indent_user  = self.n_char - len(self.annotator.name)
-
         self.layout_context.update(
             index_count=f"{self.index_counter:>{indent_index}}",
             user=f"{self.user:>{indent_user}}",
