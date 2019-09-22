@@ -25,11 +25,11 @@ class ProtoDisplay(Base):
     Counter = element_factory(template_filename='_counter.txt')
     User = element_factory(template_filename='_user.txt')
 
-    def __init__(self, annotator, interface, nav_instruction, *args, **kwargs):
+    def __init__(self, annotator, interface, *args, **kwargs):
         self.annotator = annotator
         self.interface = interface
         self.data = annotator.data
-        self.nav = nav_instruction
+        self.nav = interface.get_instruction()
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
 
     def __call__(self, id, task, error=None):
@@ -38,7 +38,7 @@ class ProtoDisplay(Base):
             total=task.of
         ).render()
 
-        if not self.interface.active:
+        if self.interface.state != 'fresh':
             try:
                 self.annotation = self.annotator.annotated.loc[id]
             except KeyError:

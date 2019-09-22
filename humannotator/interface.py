@@ -12,6 +12,7 @@ class Interface(Base):
     - Receives and validates user input.
     - Interacts with the display.
     - Stores the annotations internally.
+    - Navigates through the annotations.
     - Exits; drops last row if unfinished.
     """
 
@@ -20,7 +21,6 @@ class Interface(Base):
         self.annotations = annotator.annotations
         self.tasks = annotator.annotations.tasks
         self.user = annotator.user
-        self.active = True
         self.kwargs = kwargs
 
     def __call__(self, ids):
@@ -29,29 +29,30 @@ class Interface(Base):
         for i, id in enumerate(self.ids):
             rotation[i] = id
             self.i = i
-            self.active = True
+
             while True:
+                # check position
+                self.first = True if self.i == 0 else False
+                self.state = 'fresh' if self.i == i else 'stale'
+
+                # run interface
                 navigation = self._interface(id)
+
+                # process navigation
                 if isinstance(navigation, Previous):
-                    self.active = False
                     if not self.i == 0:
                         self.i -= 1
                 if isinstance(navigation, Next):
-                    if not self.i > i:
-                        self.active = False
+                    if self.i < i:
                         self. i += 1
-                    else:
-                        self.active = True
                 if isinstance(navigation, Continue):
                     break
                 if isinstance(navigation, Exit):
-                    break
+                    return None
                 id = rotation[self.i]
-            if isinstance(navigation, Exit):
-                break
 
     def _interface(self, id):
-        display = Display(self.annotator, self, nav_instructions, **self.kwargs)
+        display = Display(self.annotator, self, **self.kwargs)
         display.clear()
         for task in self.tasks:
             if task.has_dependencies:
@@ -65,12 +66,14 @@ class Interface(Base):
                 user_input = input()
                 display.clear()
 
-                if user_input in navigation:
-                    if self.active:
+                if user_input in NAVIGATION:
+                    if self.state == 'fresh':
                         self.annotations.data.drop(
-                            id, inplace=True, errors='ignore'
+                            id,
+                            inplace=True,
+                            errors='ignore',
                         )
-                    return navigation[user_input]
+                    return NAVIGATION[user_input]
                 user_input = task(user_input)
                 if not isinstance(user_input, Invalid):
                     break
@@ -92,6 +95,16 @@ class Interface(Base):
                 return False
         return False
 
+    def get_instruction(self):
+        if self.state == 'fresh' and self.first:
+            return Exit.instruction
+        elif self.state == 'fresh' and not self.first:
+            return ' '.join([Exit.instruction, Previous.instruction])
+        elif self.state == 'stale' and self.first:
+            return ' '.join([Exit.instruction, Next.instruction])
+        else:
+            return ' '.join([nav.instruction for nav in NAV_CLASSES])
+
 
 class Exit(object):
     character = KEYS.exit
@@ -112,6 +125,5 @@ class Continue(object):
     pass
 
 
-nav_classes = [Exit, Previous, Next]
-navigation = {nav.character:nav() for nav in nav_classes}
-nav_instructions = ' '.join([nav.instruction for nav in nav_classes])
+NAV_CLASSES = [Exit, Previous, Next]
+NAVIGATION = {nav.character:nav() for nav in NAV_CLASSES}
