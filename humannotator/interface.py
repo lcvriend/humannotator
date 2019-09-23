@@ -25,15 +25,23 @@ class Interface(Base):
 
     def __call__(self, ids):
         self.ids = ids
+        n = len(self.ids) - 1
         rotation = {}
+
+        # add all ids to rotation immediately if no tasks
+        if not self.tasks:
+            for i, id in enumerate(self.ids):
+                rotation[i] = id
+
         for i, id in enumerate(self.ids):
             rotation[i] = id
             self.i = i
 
             while True:
-                # check position
+                # check and set state
                 self.first = True if self.i == 0 else False
-                self.state = 'fresh' if self.i == i else 'stale'
+                self.last  = True if self.i == n else False
+                self.fresh = True if self.i == i and self.tasks else False
 
                 # run interface
                 navigation = self._interface(id)
@@ -43,8 +51,12 @@ class Interface(Base):
                     if not self.i == 0:
                         self.i -= 1
                 if isinstance(navigation, Next):
-                    if self.i < i:
-                        self. i += 1
+                    if self.tasks:
+                        if self.i < i:
+                            self. i += 1
+                    else:
+                        if self.i < n:
+                            self. i += 1
                 if isinstance(navigation, Continue):
                     break
                 if isinstance(navigation, Exit):
@@ -54,6 +66,17 @@ class Interface(Base):
     def _interface(self, id):
         display = Display(self.annotator, self, **self.kwargs)
         display.clear()
+        if self.tasks:
+            return self._perform_tasks(display, id)
+        else:
+            while True:
+                display(id)
+                user_input = input()
+                display.clear()
+                if user_input in NAVIGATION:
+                    return NAVIGATION[user_input]
+
+    def _perform_tasks(self, display, id):
         for task in self.tasks:
             if task.has_dependencies:
                 if self._process_dependencies(id, task):
@@ -67,7 +90,8 @@ class Interface(Base):
                 display.clear()
 
                 if user_input in NAVIGATION:
-                    if self.state == 'fresh':
+                    # only store fresh annotations if all tasks were completed
+                    if self.fresh:
                         self.annotations.data.drop(
                             id,
                             inplace=True,
@@ -96,29 +120,31 @@ class Interface(Base):
         return False
 
     def get_instruction(self):
-        if self.state == 'fresh' and self.first:
+        if self.fresh and self.first:
             return Exit.instruction
-        elif self.state == 'fresh' and not self.first:
-            return ' '.join([Exit.instruction, Previous.instruction])
-        elif self.state == 'stale' and self.first:
-            return ' '.join([Exit.instruction, Next.instruction])
+        elif self.fresh and not self.first:
+            return ''.join([Exit.instruction, Previous.instruction])
+        elif not self.fresh and self.first:
+            return ''.join([Exit.instruction, Next.instruction])
+        elif not self.fresh and self.last:
+            return ''.join([Exit.instruction, Previous.instruction])
         else:
-            return ' '.join([nav.instruction for nav in NAV_CLASSES])
+            return ''.join([nav.instruction for nav in NAV_CLASSES])
 
 
 class Exit(object):
     character = KEYS.exit
-    instruction = option(character, 'exit', newline=False)
+    instruction = option(character, 'exit')
 
 
 class Previous(object):
     character = KEYS.prev
-    instruction = option(character, 'previous', newline=False)
+    instruction = option(character, 'previous')
 
 
 class Next(object):
     character = KEYS.next
-    instruction = option(character, 'next',)
+    instruction = option(character, 'next')
 
 
 class Continue(object):

@@ -109,6 +109,40 @@ class Tasks(Base):
     def __init__(self, tasks=None):
         self.tasks = tasks
 
+    @property
+    def tasks(self):
+        return self._tasks
+
+    @tasks.setter
+    def tasks(self, tasks):
+        if tasks is None:
+            self._tasks = {}
+        else:
+            if isinstance(tasks, Task):
+                tasks = [tasks]
+            if isinstance(tasks, list):
+                assert all(isinstance(i, Task) for i in tasks)
+                self._tasks = {task.name:task for task in tasks}
+            else:
+                assert all(isinstance(v, Task) for v in tasks.values())
+                self._tasks = tasks
+            self._set_pos_in_tasks()
+
+    @property
+    def order(self):
+        return {idx:task for idx, task in enumerate(self.tasks.keys())}
+
+    @order.setter
+    def order(self, value):
+        if all(isinstance(i, int) for i in value):
+            value = [self.order[i] for i in value]
+        self.tasks = {name:self.tasks[name] for name in value}
+
+    def _set_pos_in_tasks(self):
+        for position, task in self.order.items():
+            setattr(self[task], 'pos', position)
+            setattr(self[task], 'of', len(self))
+
     def __getitem__(self, id):
         return self.tasks[id]
 
@@ -147,39 +181,11 @@ class Tasks(Base):
             )
         return NotImplemented
 
-    @property
-    def tasks(self):
-        return self._tasks
-
-    @tasks.setter
-    def tasks(self, tasks):
-        if tasks is None:
-            self._tasks = {}
+    def __bool__(self):
+        if self.tasks:
+            return True
         else:
-            if isinstance(tasks, Task):
-                tasks = [tasks]
-            if isinstance(tasks, list):
-                assert all(isinstance(i, Task) for i in tasks)
-                self._tasks = {task.name:task for task in tasks}
-            else:
-                assert all(isinstance(v, Task) for v in tasks.values())
-                self._tasks = tasks
-            self._set_pos_in_tasks()
-
-    @property
-    def order(self):
-        return {idx:task for idx, task in enumerate(self.tasks.keys())}
-
-    @order.setter
-    def order(self, value):
-        if all(isinstance(i, int) for i in value):
-            value = [self.order[i] for i in value]
-        self.tasks = {name:self.tasks[name] for name in value}
-
-    def _set_pos_in_tasks(self):
-        for position, task in self.order.items():
-            setattr(self[task], 'pos', position)
-            setattr(self[task], 'of', len(self))
+            return False
 
 
 def convert_dtypes(df):

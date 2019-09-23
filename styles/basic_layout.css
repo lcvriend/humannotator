@@ -4,8 +4,7 @@
         "name name"
         "_id_ _idx"
         "item item"
-        "task _tsk"
-        "err_ err_"
+        "task task"
         "anno anno";
 }
 /* GRID AREAS */
@@ -36,13 +35,24 @@ div.humannotator__item {
 }
 div.humannotator__task {
     grid-area: task;
+    display: grid;
+    grid-template-areas:
+        "task_name  task_count"
+        "task_instr task_instr"
+        "task_error task_error";
+}
+div.humannotator__task__name {
+    grid-area: task_name;
 }
 div.humannotator__task__counter {
-    grid-area: _tsk;
+    grid-area: task_count;
     justify-self: end;
 }
+div.humannotator__task__instruction {
+    grid-area: task_instr;
+}
 div.humannotator__error {
-    grid-area: err_;
+    grid-area: task_error;
     font-style: italic;
     color: darkred;
 }
@@ -63,8 +73,6 @@ div.humannotator__id,
 div.humannotator__idx__counter,
 div.humannotator__item,
 div.humannotator__task,
-div.humannotator__task__counter,
-div.humannotator__error,
 div.humannotator__annotation {
     padding: .25rem .5rem;
 }
@@ -88,7 +96,7 @@ span.humannotator__user {
     font-size: .8em;
     font-weight: 400;
 }
-div.humannotator__task__format {
+div.humannotator__task {
     font-family: 'Courier New', Courier, monospace;
     font-size: .9em;
 }

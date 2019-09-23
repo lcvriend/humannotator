@@ -4,7 +4,5 @@
 [_lbl_item_]
 [CONTENT]
 [_line_]
-Task [TASK_COUNT]
-[TASK_NAME] ([TASK_TYPE])
-[INSTRUCTION][ERROR]
+[TASKS]
 [ANNOTATION]

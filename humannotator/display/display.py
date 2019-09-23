@@ -10,9 +10,9 @@ from IPython.display import HTML, display, clear_output
 
 # local
 from humannotator.display.elements import element_factory
-from humannotator.display.tools import (
-    AnnotatedJupyter,
-    AnnotatedText,
+from humannotator.display.components import (
+    AnnotationDisplayJupyter,
+    AnnotationDisplayText,
     Highlighter,
     TruncaterJupyter,
     TruncaterText,
@@ -23,40 +23,50 @@ from humannotator.utils import Base, JUPYTER
 
 class ProtoDisplay(Base):
     Counter = element_factory(template_filename='_counter.txt')
-    User = element_factory(template_filename='_user.txt')
+    User    = element_factory(template_filename='_user.txt')
 
     def __init__(self, annotator, interface, *args, **kwargs):
         self.annotator = annotator
         self.interface = interface
         self.data = annotator.data
-        self.nav = interface.get_instruction()
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
+        self.navigation = interface.get_instruction()
 
-    def __call__(self, id, task, error=None):
-        self.task_counter = self.Counter(
-            count=task.pos+1,
-            total=task.of
-        ).render()
+    def __call__(self, id, task=None, error=None):
+        self.layout_context = {
+            'annotator':   self.annotator.name,
+            'user':        self.user,
+            'index_count': self.index_counter,
+            'item_id':     id,
+        }
+        self.task_context = {
+                'task_name':   'Navigation',
+                'instruction': self.navigation,
+                'task_count':  '',
+                'task_type':   '',
+                'error':       '',
+            }
 
-        if self.interface.state != 'fresh':
+        if task:
+            task_counter = self.Counter(
+                count=task.pos+1,
+                total=task.of
+            ).render()
+            self.task_context = {
+                'task_name':   task.name,
+                'instruction': task.instruction + self.navigation,
+                'task_count':  'Task ' + task_counter,
+                'task_type':   f"({task.kind})",
+                'error':       error if error else '',
+            }
+
+        if not self.interface.fresh:
             try:
                 self.annotation = self.annotator.annotated.loc[id]
             except KeyError:
                 self.annotation = pd.Series()
         else:
             self.annotation = pd.Series()
-
-        self.layout_context = {
-            'annotator':   self.annotator.name,
-            'user':        self.user,
-            'index_count': self.index_counter,
-            'task_count':  self.task_counter,
-            'task_name':   task.name,
-            'task_type':   task.kind,
-            'item_id':     id,
-            'instruction': task.instruction + self.nav,
-            'error':       error if error else '',
-        }
 
     @property
     def index_counter(self):
@@ -81,6 +91,7 @@ class ProtoDisplay(Base):
 
 class DisplayJupyter(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.html')
+    Tasks     = element_factory(template_filename='tasks.html')
     Item      = element_factory(template_filename='_item.html')
     Highlight = element_factory(template_filename='_highlight.html')
 
@@ -88,11 +99,14 @@ class DisplayJupyter(ProtoDisplay):
         super().__init__(*args, **kwargs)
         self.truncate = TruncaterJupyter(**kwargs)
 
-    def __call__(self, id, task, **kwargs):
-        super().__call__(id, task, **kwargs)
+    def __call__(self, id, *args, **kwargs):
+        super().__call__(id, *args, **kwargs)
+        self.task_context.update(
+            instruction=markdown(self.task_context['instruction']),
+        )
         self.layout_context.update(
-            instruction=markdown(task.instruction + self.nav),
-            annotation=AnnotatedJupyter(self.annotation).render()
+            tasks=self.Tasks(**self.task_context).render(),
+            annotation=AnnotationDisplayJupyter(self.annotation).render()
         )
         layout = self.Layout(**self.layout_context)
         for label, item in self.data.record(id):
@@ -108,20 +122,21 @@ class DisplayJupyter(ProtoDisplay):
 
 class DisplayText(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.txt')
+    Tasks     = element_factory(template_filename='tasks.txt')
     Item      = element_factory(template_filename='_item.txt')
     Highlight = element_factory(template_filename='_highlight.txt')
 
     n_char    = len(Layout._snippets['_line_'])
     n_lbl_id  = len(Layout._snippets['_lbl_id_'])
 
-    def __call__(self, id, task, **kwargs):
-        super().__call__(id, task, **kwargs)
+    def __call__(self, id, *args, **kwargs):
+        super().__call__(id, *args, **kwargs)
         indent_index = self.n_char - self.n_lbl_id - len(str(id))
         indent_user  = self.n_char - len(self.annotator.name)
 
         self.layout_context.update(
-            instruction=task.instruction + self.nav,
-            annotation=AnnotatedText(self.annotation).render()
+            tasks=self.Tasks(**self.task_context).render(),
+            annotation=AnnotationDisplayText(self.annotation).render()
         )
         self.truncate = TruncaterText(
             length=self.n_char,

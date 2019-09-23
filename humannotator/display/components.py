@@ -12,7 +12,7 @@ from humannotator.utils import Base, JUPYTER
 from humannotator.display.elements import element_factory
 
 
-class Annotated(Base):
+class AnnotationDisplay(Base):
     def __init__(self, annotation):
         self.annotation = annotation
 
@@ -29,8 +29,8 @@ class Annotated(Base):
         return self.annotation.drop(['user', 'timestamp'])
 
 
-class AnnotatedText(Annotated):
-    Annotation = element_factory(template_filename='_annotation.txt')
+class AnnotationDisplayText(AnnotationDisplay):
+    Annotation = element_factory(template_filename='annotation.txt')
 
     def render(self):
         if not self.annotation.empty:
@@ -43,8 +43,8 @@ class AnnotatedText(Annotated):
             return ''
 
 
-class AnnotatedJupyter(Annotated):
-    Annotation = element_factory(template_filename='_annotation.html')
+class AnnotationDisplayJupyter(AnnotationDisplay):
+    Annotation = element_factory(template_filename='annotation.html')
     Item       = element_factory(template_filename='_item.html')
 
     def render(self):
