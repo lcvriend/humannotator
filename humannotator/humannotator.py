@@ -176,7 +176,7 @@ class Annotator(Base):
                 "Load the data first by assigning it "
                 "to the `data` property of the annotator."
             )
-        return self._data
+        return self._data.data
 
     @data.setter
     def data(self, data):
