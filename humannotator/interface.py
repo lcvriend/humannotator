@@ -47,6 +47,11 @@ class Interface(Base):
                 navigation = self._interface(id)
 
                 # process navigation
+                if isinstance(navigation, Continue):
+                    if self.fresh:
+                        break
+                    else:
+                        navigation = Next()
                 if isinstance(navigation, Previous):
                     if not self.i == 0:
                         self.i -= 1
@@ -57,8 +62,6 @@ class Interface(Base):
                     else:
                         if self.i < n:
                             self. i += 1
-                if isinstance(navigation, Continue):
-                    break
                 if isinstance(navigation, Exit):
                     return None
                 id = rotation[self.i]
