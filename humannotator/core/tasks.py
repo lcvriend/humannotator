@@ -84,7 +84,7 @@ class Task(Base):
         if hasattr(self, 'items'):
             instruction += '  \n' + self.items
         if self.nullable:
-            return instruction + Null.instruction + '  \n'
+            return instruction + '  \n' + Null.instruction + '  \n'
         return instruction + '  \n'
 
     @instruction.setter
