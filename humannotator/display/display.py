@@ -28,7 +28,7 @@ class ProtoDisplay(Base):
     def __init__(self, annotator, interface, *args, **kwargs):
         self.annotator = annotator
         self.interface = interface
-        self.data = annotator.data
+        self.data = annotator._data
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
         self.navigation = interface.get_instruction()
 

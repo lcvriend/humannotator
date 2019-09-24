@@ -142,7 +142,7 @@ class Annotator(Base):
         if isinstance(ids, (str, int)):
             ids = [ids]
         if ids is None:
-            ids = self.data.ids
+            ids = self._data.ids
 
         # skip annotated ids, unless redo is True
         if not redo:
