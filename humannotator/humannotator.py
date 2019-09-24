@@ -176,6 +176,7 @@ class Annotator(Base):
                 "Load the data first by assigning it "
                 "to the `data` property of the annotator."
             )
+            return None
         return self._data.data
 
     @data.setter
@@ -208,7 +209,7 @@ class Annotator(Base):
         "Return dataframe combining data and annotations."
         if self.data is None:
             return None
-        d = self.data.data.copy()
+        d = self.data.copy()
         a = self.annotated.copy()
         d.columns = pd.MultiIndex.from_product([['DATA'], d.columns])
         a.columns = pd.MultiIndex.from_product([['ANNOTATIONS'], a.columns])
