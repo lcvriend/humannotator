@@ -1,5 +1,5 @@
-include README.rst
-include config.ini
-include snippets/*.*
-include styles/*.*
-include templates/*.*
+include README.md
+include humannotator/config.ini
+include humannotator/display/snippets/*.*
+include humannotator/display/styles/*.*
+include humannotator/display/templates/*.*

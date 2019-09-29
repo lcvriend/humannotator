@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -6,8 +6,7 @@ with open("README.md", "r") as f:
 setup(
     name='humannotator',
     version='0.0.1',
-    description='Library for building custom annotation tools',
-    long_description=open('README.md').read(),
+    description='Easy customizable manual annotation tool',
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
@@ -15,14 +14,16 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 3.7',
+        'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Text Processing :: Linguistic',
+        'Topic :: Utilities',
     ],
-    keywords='annotation',
+    keywords='annotation annotator text data pandas',
     url='http://github.com/lcvriend/humannotator',
     author='L.C. Vriend, D.E. Kim',
     author_email='vanboefer@gmail.com',
     license='GPLv3+',
-    packages=['humannotator'],
+    packages=find_packages(),
     install_requires=[
         'pandas',
         'markdown',
