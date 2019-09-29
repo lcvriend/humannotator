@@ -4,7 +4,7 @@ from collections import namedtuple
 from pathlib import Path
 
 
-PATH_LIB = Path(__file__).resolve().parent.parent
+PATH_LIB = Path(__file__).resolve().parent
 CFG_FILE  = PATH_LIB / 'config.ini'
 encoding = 'utf-8' # encoding of ini file only
 

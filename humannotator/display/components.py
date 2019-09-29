@@ -8,7 +8,8 @@ from textwrap import wrap
 
 # local
 from humannotator.config import CSS
-from humannotator.utils import Base, JUPYTER
+from humannotator.utils import Base
+from humannotator.display import JUPYTER
 from humannotator.display.elements import element_factory
 
 

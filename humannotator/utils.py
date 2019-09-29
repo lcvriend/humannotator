@@ -15,13 +15,3 @@ def option(character, instruction, newline=True):
     if newline:
         return f"[{character}] - {instruction}  \n"
     return f"[{character}] - {instruction}"
-
-def test_for_ipython():
-    try:
-        get_ipython()
-        return True
-    except NameError:
-        return False
-
-
-JUPYTER = test_for_ipython()

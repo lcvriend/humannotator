@@ -6,9 +6,13 @@ from collections.abc import Mapping
 # third party
 import pandas as pd
 from markdown import markdown
-from IPython.display import HTML, display, clear_output
+try:
+    from IPython.display import HTML, display, clear_output
+except ModuleNotFoundError:
+    pass
 
 # local
+from humannotator.display import JUPYTER
 from humannotator.display.elements import element_factory
 from humannotator.display.components import (
     AnnotationDisplayJupyter,
@@ -18,7 +22,7 @@ from humannotator.display.components import (
     TruncaterText,
     normalize,
 )
-from humannotator.utils import Base, JUPYTER
+from humannotator.utils import Base
 
 
 class ProtoDisplay(Base):

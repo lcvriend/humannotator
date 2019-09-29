@@ -1,3 +1,0 @@
-[_line_]
-ANNOTATION - [_lbl_user_][user], [_lbl_timestamp_][timestamp]
-[annotation]
