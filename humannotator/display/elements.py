@@ -1,3 +1,26 @@
+"""
+This module contains the display element factory. This factory produces
+display elements from the template definitions that are stored in the templates
+folder. A template object is instantiated by passing it values for its
+variables.
+
+A template definition can also refer to 'snippets' which are stored in the
+eponymous folder. By convention snippets are marked by underscores in the
+template definition. When encountering similar snippets, the loader will prefer
+snippets of the same extension as the template. If no snippet with matching
+suffix is found, then it defaults to the text snippet.
+
+Each display element object has an id, a level of embededness and a language. A
+display element can contain two special variables:
+- Content:
+    If an element has a 'content' slot, then other elements can be embedded
+    within it.
+- CSS:
+    The CSS variable is special because it is basically a snippet but it is
+    stored in its own location (the 'styles' folder).
+"""
+
+
 # standard library
 import re
 import textwrap

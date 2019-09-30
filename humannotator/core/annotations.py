@@ -1,3 +1,11 @@
+"""
+This module connects the annotation tasks and their results. The Annotations
+class is the main container taking care of this. It contains the tasks to be
+performed, as well as the storage for the annotations themselves. The tasks are
+maintained and ordered in the Tasks class.
+"""
+
+
 # local
 import warnings
 

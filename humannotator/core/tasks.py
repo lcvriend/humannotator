@@ -1,3 +1,9 @@
+"""
+This module defines the different task types and the dependency class. It also
+provides the task factory which can be used to conveniently create tasks.
+"""
+
+
 # local
 import re
 import textwrap

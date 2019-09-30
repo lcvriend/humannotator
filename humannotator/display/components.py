@@ -1,3 +1,12 @@
+"""
+This module contains the following display components:
+    - the annotation display component
+    - the item truncater
+    - the item normalizer
+    - the key-word highlighter
+"""
+
+
 # standard library
 import os
 import re

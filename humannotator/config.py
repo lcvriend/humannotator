@@ -1,3 +1,8 @@
+"""
+This module loads the settings from config.ini.
+"""
+
+
 # standard library
 import configparser
 from collections import namedtuple

@@ -1,3 +1,9 @@
+"""
+This module takes care of the interface of the annotator. It connects the
+annototator, user input and the display.
+"""
+
+
 # local
 from humannotator.utils import Base, option
 from humannotator.config import KEYS

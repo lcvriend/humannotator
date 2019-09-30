@@ -1,3 +1,9 @@
+"""
+This module is the main access point to the humannotator. The Annotator class
+connects the data, annotations and tasks to the user interface and display.
+"""
+
+
 # standard library
 import pickle
 
@@ -230,13 +236,12 @@ class Annotator(Base):
 
 
 if __name__ == '__main__':
-    import sys
     import pandas as pd
     from humannotator import Annotator, task_factory, load_data
-    sys.path.insert(0, '../')
 
     # load data
-    df = pd.read_csv('examples/news.csv', index_col=0)
+    url = 'https://raw.githubusercontent.com/lcvriend/humannotator/master/examples/news.csv'
+    df = pd.read_csv(url, index_col=0)
     data = load_data(df, item_cols=['title', 'date'], id_col='news_id')
 
     # define tasks

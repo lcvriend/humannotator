@@ -1,3 +1,10 @@
+"""
+This module contains the Data class. Currently only dataframes or data that
+can be converted into a dataframe are accepted. In the future support for other
+data types may be added.
+"""
+
+
 # standard library
 from collections.abc import Sequence, Mapping
 
@@ -116,7 +123,3 @@ def load_data(data, **kwargs):
             "Data needs to be of one of the following types: "
             f"{[cls.kind.__name__ for cls in registry.values()]}."
         )
-
-
-if __name__ == '__main__':
-    pass

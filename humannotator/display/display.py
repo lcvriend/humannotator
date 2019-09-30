@@ -1,3 +1,22 @@
+"""
+This module controls the display of the annotator. If the annotator is run
+in Jupyter the display will be rendered in html, otherwise the display will be
+text-based.
+
+Classes
+=======
+ProtoDisplay:
+    Class containing the methods and attributes that are common to both the
+    Jupyter and text display.
+DisplayJupyter:
+    Class containing the methods and attributes specific to the Jupyter display.
+DisplayText:
+    Class containing the methods and attributes specific to the text display.
+Display:
+    Class factory that instantiates either the Jupyter or the Text display.
+"""
+
+
 # standard library
 import html
 import os
