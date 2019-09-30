@@ -7,7 +7,7 @@ from itertools import cycle
 from textwrap import wrap
 
 # local
-from humannotator.config import CSS
+from humannotator.config import COMPONENTS
 from humannotator.utils import Base
 from humannotator.display import JUPYTER
 from humannotator.display.elements import element_factory
@@ -68,7 +68,12 @@ class AnnotationDisplayJupyter(AnnotationDisplay):
 
 
 class Truncater(Base):
-    def __init__(self, truncate=True, trunc_limit=32, **kwargss):
+    def __init__(
+        self,
+        truncate=COMPONENTS.truncate,
+        trunc_limit=COMPONENTS.truncate_word_limit,
+        **kwargss
+    ):
         self.active = truncate
         self.limit = trunc_limit
 
@@ -111,7 +116,7 @@ class TruncaterText(Truncater):
 
 
 class Highlighter(Base):
-    styles = CSS.highlight,
+    styles = COMPONENTS.highlight,
 
     def __init__(self, template, phrases=None, escape=False, flags=0, **kwargs):
         self.template = template
