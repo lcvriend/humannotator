@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 setup(
     name='humannotator',
     version='0.0.1',
-    description='Easy customizable manual annotation tool',
+    description='Customizable tool for easy manual annotation',
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
