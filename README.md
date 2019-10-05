@@ -21,6 +21,20 @@ and you are looking for a solution that is:
 
 ## Quick start
 
+### Install the humannotator
+
+Install with conda:
+
+```
+    conda install -c lcvriend humannotator
+```
+
+Or use pip:
+
+```
+    pip install humannotator
+```
+
 ### Create a simple annotator
 
 1. [Load the data](#load-data)
