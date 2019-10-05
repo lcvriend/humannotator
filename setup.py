@@ -5,13 +5,13 @@ from setuptools import setup, find_packages
 PATH = Path(__file__).resolve().parent
 
 def get_version(filename, key):
-    regex = rf"^__{key}__ = ['\"]([^'\"]*)['\"]"
+    regex = rf"^__{key}__\s*=\s*['\"]([^'\"]*)['\"]"
     file = PATH / filename
     file_content = file.read_text(encoding='utf8')
     version_match = re.search(regex, file_content, re.M)
     if version_match:
         return version_match.group(1)
-    raise RuntimeError("Unable to find {key} string.")
+    raise RuntimeError(f"Unable to find '{key}' string.")
 
 with open("README.md", "r") as f:
     long_description = f.read()
