@@ -1,11 +1,24 @@
+import re
+from pathlib import Path
 from setuptools import setup, find_packages
+
+PATH = Path(__file__).resolve().parent
+
+def get_version(filename):
+    regex = r"^__version__ = ['\"]([^'\"]*)['\"]"
+    file = PATH / filename
+    file_content = file.read_text(encoding='utf8')
+    version_match = re.search(regex, file_content, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
 
 with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
     name='humannotator',
-    version='0.0.1',
+    version=get_version('humannotator/version.py'),
     description='Customizable tool for easy manual annotation',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -25,7 +38,7 @@ setup(
     license='GPLv3+',
     packages=find_packages(),
     install_requires=[
-        'pandas',
+        'pandas>=0.24.0',
         'markdown',
     ],
     include_package_data=True,
