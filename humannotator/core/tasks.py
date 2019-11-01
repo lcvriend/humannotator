@@ -143,7 +143,7 @@ class Task(Base):
     def __call__(self, value):
         "Validate input."
         if self.nullable:
-            if value == Null.character:
+            if value == Null.character or value is None or value != value:
                 return None
         return value
 
@@ -172,7 +172,7 @@ class Task_str(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if value:
+        if value is not None:
             try:
                 value = str(value)
             except ValueError:
@@ -195,8 +195,9 @@ class Task_regex(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if not re.fullmatch(self.regex, value):
-            return Invalid(self.invalid)
+        if value is not None:
+            if not re.fullmatch(self.regex, value):
+                return Invalid(self.invalid)
         return value
 
 
@@ -208,7 +209,7 @@ class Task_int(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if value:
+        if value is not None:
             try:
                 value = int(value)
             except ValueError:
@@ -223,7 +224,7 @@ class Task_float(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if value:
+        if value is not None:
             try:
                 value = float(value)
             except ValueError:
@@ -246,7 +247,7 @@ class Task_bool(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if value:
+        if value is not None:
             try:
                 value = BOOLEAN_STATES[value.lower()]
             except KeyError:
@@ -273,8 +274,9 @@ class Task_category(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        if not value in self.categories:
-            return Invalid(self.invalid)
+        if value is not None:
+            if not value in self.categories:
+                return Invalid(self.invalid)
         return self.categories[value]
 
 
@@ -289,10 +291,11 @@ class Task_date(Task):
 
     def __call__(self, value):
         value = super().__call__(value)
-        try:
-            value = datetime.strptime(value, self.format)
-        except ValueError:
-            return Invalid(self.invalid)
+        if value is not None:
+            try:
+                value = datetime.strptime(value, self.format)
+            except ValueError:
+                return Invalid(self.invalid)
         return value
 
 
