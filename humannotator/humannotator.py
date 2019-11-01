@@ -44,6 +44,8 @@ class Annotator(Base):
         - Annotation data
     annotated : DataFrame
         Annotation data.
+    unannotated : list
+        List of indeces to unannotated records.
     merged : DataFrame
         Table merging data and annotations.
     """
@@ -160,14 +162,6 @@ class Annotator(Base):
         interface = Interface(self, **kwargs)
         interface(ids)
 
-    @property
-    def unannotated(self):
-        "The indeces that do not have an annotation."
-        return [
-            id for id in self.data.index
-            if id not in self.annotations.data.index
-        ]
-
     def __getstate__(self):
         state = self.__dict__.copy()
         if not self.save_data:
@@ -217,6 +211,14 @@ class Annotator(Base):
     def annotated(self):
         "Dataframe with the stored annotations."
         return self.annotations.data
+
+    @property
+    def unannotated(self):
+        "The indeces to the records that have not been annotated."
+        return [
+            id for id in self.data.index
+            if id not in self.annotations.data.index
+        ]
 
     def merged(self):
         "Return dataframe combining data and annotations."
