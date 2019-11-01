@@ -50,8 +50,8 @@ class Annotator(Base):
 
     def __init__(
         self,
-        tasks=None,
         data=None,
+        tasks=None,
         user=None,
         name='HUMANNOTATOR',
         save_data=False,
@@ -160,6 +160,13 @@ class Annotator(Base):
         interface = Interface(self, **kwargs)
         interface(ids)
 
+    @property
+    def unannotated(self):
+        "The indeces that do not have an annotation."
+        return [
+            id for id in self.data.index
+            if id not in self.annotations.data.index
+        ]
 
     def __getstate__(self):
         state = self.__dict__.copy()
