@@ -25,10 +25,10 @@ div.humannotator__idx__counter {
     grid-area: _idx;
     justify-self: end;
 }
-div.humannotator__item {
+div.humannotator__record {
     grid-area: item;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto 1fr;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     margin-bottom: .25rem;
@@ -71,7 +71,7 @@ div.humannotator__annotation {
 div.humannotator__name,
 div.humannotator__id,
 div.humannotator__idx__counter,
-div.humannotator__item,
+div.humannotator__record,
 div.humannotator__task,
 div.humannotator__annotation {
     padding: .25rem .5rem;
@@ -81,7 +81,7 @@ div.humannotator__container {
     align-items: center;
 }
 div.humannotator__label {
-    min-width: 4em;
+    min-width: 8em;
     font-size: .8em;
     margin-right: 1em;
 }
