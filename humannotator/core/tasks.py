@@ -158,12 +158,24 @@ class Task(Base):
         return NotImplemented
 
     def __str__(self):
-        return (
-            f"name: {textwrap.shorten(self.name, width=20):<21} | "
-            f"kind: {self.kind:<16} | "
-            f"null: {self.nullable:<6} | "
-            f"has_dependencies: {self.has_dependencies}"
+        prefix = '   '
+        string = (
+            f"name: {self.name}\n"
+            f"kind: {self.kind}\n"
+            f"null: {self.nullable}\n"
         )
+        if self.instruction:
+            instr = self.instruction.strip('\n ')
+            instr = textwrap.indent(f'{instr}', prefix=prefix)
+            string += 'instruction:\n' + instr + '\n'
+        if self.has_dependencies:
+            deps = '\n'.join(str(i) for i in self.dependencies)
+            deps = textwrap.indent(f"\n{deps}", prefix=prefix)
+            string += 'dependencies:' + deps + '\n'
+        return string
+
+    def __repr__(self):
+        return str(self)
 
 @register
 class Task_str(Task):
@@ -390,3 +402,6 @@ class Dependency(Base):
         if isinstance(other, Dependency):
             return self.__dict__ == other.__dict__
         return NotImplemented
+
+    def __str__(self):
+        return f'condition: "{self.condition}" | value: {self.value}'

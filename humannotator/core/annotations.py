@@ -217,6 +217,20 @@ class Tasks(Base):
         else:
             return False
 
+    def __str__(self):
+        string = ''
+        for task in self:
+            string += f"task: {task.pos}\n"
+            string += str(task) + '\n'
+        return string
+
+    def __repr__(self):
+        return str(self)
+
+    @classmethod
+    def from_df(cls, df, instructions=None):
+        return cls(cls._extract_tasks_from_df(df, instructions=instructions))
+
 
 def convert_dtypes(df):
     aliases = {
