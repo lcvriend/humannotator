@@ -19,8 +19,19 @@ from humannotator.core.tasks import REGISTRY, task_factory, Task
 
 class Annotations(Base):
     def __init__(self, tasks=None, dependencies=None):
-        self.tasks = Tasks(tasks)
+        self.tasks = tasks
         self.data = self._build_data_structure()
+
+    @property
+    def tasks(self):
+        return self._tasks
+
+    @tasks.setter
+    def tasks(self, tasks):
+        if isinstance(tasks, Tasks):
+            self._tasks = tasks
+        else:
+            self._tasks = Tasks(tasks)
 
     @property
     def data(self):
@@ -69,7 +80,7 @@ class Annotations(Base):
 
     def _check_data_structure(self):
         for task in self.tasks:
-            if task not in self.tasks_from_df(self._data):
+            if task not in Tasks.from_df(self._data):
                 df = self._build_data_structure()
                 df = df.append(self._data, sort=False)
                 self._data = df
@@ -83,34 +94,12 @@ class Annotations(Base):
             df['timestamp'] = pd.Series(index=df.index, dtype='datetime64[ns]')
         if 'user' not in df.columns:
             df['user'] = None
-        tasks = cls.tasks_from_df(
+        tasks = Tasks.from_df(
             df.drop(['timestamp', 'user'], axis=1, errors='ignore'), **kwargs
         )
         annotations = cls(tasks)
         annotations.data = df
         return annotations
-
-    @staticmethod
-    def tasks_from_df(df, instructions=None):
-        args = []
-        instructions = pd.Series(instructions, index=df.columns)
-        tasks = pd.concat([df.dtypes, instructions], axis=1)
-        tasks.columns = ['dtype', 'instruction']
-        for task in tasks.itertuples():
-            kwargs = {}
-            name = task.Index
-            for item in REGISTRY.values():
-                if item.dtype == task.dtype.name:
-                    kind = item.kind
-                    if kind == 'category':
-                        kwargs['categories'] = task.dtype.categories
-                    break
-            kwargs['instruction'] = task.instruction
-            args.append((kind, name, kwargs))
-        return [
-            task_factory(kind, name, **kwargs)
-            for kind, name, kwargs in args
-        ]
 
 
 class Tasks(Base):
@@ -149,6 +138,9 @@ class Tasks(Base):
         else:
             if isinstance(tasks, Task):
                 tasks = [tasks]
+            elif isinstance(tasks, pd.DataFrame):
+                tasks = self._extract_tasks_from_df(tasks)
+
             if isinstance(tasks, list):
                 assert all(isinstance(i, Task) for i in tasks)
                 self._tasks = {task.name:task for task in tasks}
@@ -230,6 +222,28 @@ class Tasks(Base):
     @classmethod
     def from_df(cls, df, instructions=None):
         return cls(cls._extract_tasks_from_df(df, instructions=instructions))
+
+    @staticmethod
+    def _extract_tasks_from_df(df, instructions=None):
+        args = []
+        instructions = pd.Series(instructions, index=df.columns)
+        tasks = pd.concat([df.dtypes, instructions], axis=1)
+        tasks.columns = ['dtype', 'instruction']
+        for task in tasks.itertuples():
+            kwargs = {}
+            name = task.Index
+            for item in REGISTRY.values():
+                if item.dtype == task.dtype.name:
+                    kind = item.kind
+                    if kind == 'category':
+                        kwargs['categories'] = task.dtype.categories
+                    break
+            kwargs['instruction'] = task.instruction
+            args.append((kind, name, kwargs))
+        return [
+            task_factory(kind, name, **kwargs)
+            for kind, name, kwargs in args
+        ]
 
 
 def convert_dtypes(df):
