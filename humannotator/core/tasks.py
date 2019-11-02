@@ -20,9 +20,9 @@ from humannotator.config import BOOLEAN_STATES, KEYS
 from humannotator.utils import Base, option
 
 
-registry = {}
+REGISTRY = {}
 def register(cls):
-    registry[cls.kind] = cls
+    REGISTRY[cls.kind] = cls
     return cls
 
 
@@ -277,7 +277,8 @@ class Task_category(Task):
         if value is not None:
             if not value in self.categories:
                 return Invalid(self.invalid)
-        return self.categories[value]
+            return self.categories[value]
+        return value
 
 
 @register
@@ -362,10 +363,10 @@ def task_factory(kind, *args, **kwargs):
     if type(kind) == type:
         kind = kind.__name__
     if isinstance(kind, str):
-        if kind not in registry:
+        if kind not in REGISTRY:
             raise KeyError(
                 f"Unrecognized task type '{kind}'. "
-                f"Choose from: {registry.keys()}."
+                f"Choose from: {REGISTRY.keys()}."
             )
     else:
         if 'categories' in kwargs:
@@ -377,7 +378,7 @@ def task_factory(kind, *args, **kwargs):
         kwargs['categories'] = kind
         kind = 'category'
 
-    return registry[kind](*args, **kwargs)
+    return REGISTRY[kind](*args, **kwargs)
 
 
 class Dependency(Base):

@@ -14,7 +14,7 @@ import pandas as pd
 
 # local
 from humannotator.utils import Base
-from humannotator.core.tasks import registry, task_factory, Task
+from humannotator.core.tasks import REGISTRY, task_factory, Task
 
 
 class Annotations(Base):
@@ -77,7 +77,7 @@ class Annotations(Base):
 
     @classmethod
     def from_df(cls, df, **kwargs):
-        supported_dtypes = [item.dtype for item in registry.values()]
+        supported_dtypes = [item.dtype for item in REGISTRY.values()]
         df = convert_dtypes(df).select_dtypes(include=supported_dtypes)
         if 'timestamp' not in df.columns:
             df['timestamp'] = pd.Series(index=df.index, dtype='datetime64[ns]')
@@ -99,7 +99,7 @@ class Annotations(Base):
         for task in tasks.itertuples():
             kwargs = {}
             name = task.Index
-            for item in registry.values():
+            for item in REGISTRY.values():
                 if item.dtype == task.dtype.name:
                     kind = item.kind
                     if kind == 'category':
@@ -221,7 +221,7 @@ class Tasks(Base):
 def convert_dtypes(df):
     aliases = {
         alias:task.dtype
-        for task in registry.values()
+        for task in REGISTRY.values()
         for alias in task.alias if alias
     }
     conversions = {}
