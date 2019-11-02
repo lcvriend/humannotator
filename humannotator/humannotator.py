@@ -38,7 +38,9 @@ class Annotator(Base):
         Data to be annotated.
     user : str
         Name of user.
-    annotations : annotations
+    tasks : Tasks
+        - Annotation tasks
+    annotations : Annotations
         Object containing:
         - Annotation tasks
         - Annotation data
@@ -63,7 +65,7 @@ class Annotator(Base):
 
         arguments
         ---------
-        tasks : task, list of task or DataFrame
+        tasks : task, list of tasks or DataFrame
             Annotation task(s).
             If passed a DataFrame, then the tasks will be inferred from it.
             Annotation data in the dataframe will also be initialized.
@@ -122,7 +124,6 @@ class Annotator(Base):
         self.user = user
         self.name = name
         self.annotations = tasks
-        self.tasks = self.annotations.tasks
         self.data = data
         self.save_data = save_data
 
@@ -197,7 +198,7 @@ class Annotator(Base):
 
     @property
     def annotations(self):
-        "The annotations object containing the tasks and annotation data."
+        "Container for the task definitions and annotation data."
         return self._annotations
 
     @annotations.setter
@@ -206,6 +207,14 @@ class Annotator(Base):
             self._annotations = Annotations.from_df(tasks)
         else:
             self._annotations = Annotations(tasks)
+
+    @property
+    def tasks(self):
+        return self.annotations.tasks
+
+    @tasks.setter
+    def tasks(self, tasks):
+        self.annotations.tasks = tasks
 
     @property
     def annotated(self):
