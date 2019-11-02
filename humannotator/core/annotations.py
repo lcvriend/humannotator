@@ -114,11 +114,32 @@ class Annotations(Base):
 
 
 class Tasks(Base):
+    """
+    Tasks
+    =====
+
+    Class for storing tasks for annotation.
+    - Tasks can be set and accessed through subscription.
+    - Evaluates to False if no tasks are defined.
+
+    Attributes
+    ----------
+    tasks : dict of Tasks
+        Dictionary containing all Task objects.
+        - key: name of task
+        - value: task
+    order : dict of Tasks
+        Dictionary containing all Task objects.
+        - key: index
+        - value: task
+    """
+
     def __init__(self, tasks=None):
         self.tasks = tasks
 
     @property
     def tasks(self):
+        "Tasks to be performed."
         return self._tasks
 
     @tasks.setter
@@ -138,6 +159,7 @@ class Tasks(Base):
 
     @property
     def order(self):
+        "Order in which tasks are to be performed."
         return {idx:task for idx, task in enumerate(self.tasks.keys())}
 
     @order.setter
