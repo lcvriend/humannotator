@@ -62,7 +62,7 @@ Or use pip:
         nullable=True
     )
 
-    annotator = Annotator([task1, task2], df[cols])
+    annotator = Annotator(df[cols], [task1, task2])
 ```
 
 ### Annotate your data
