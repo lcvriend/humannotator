@@ -212,7 +212,7 @@ class Tasks(Base):
     def __str__(self):
         string = ''
         for task in self:
-            string += f"task: {task.pos}\n"
+            string += f"{'task':<16}{task.pos}\n"
             string += str(task) + '\n'
         return string
 

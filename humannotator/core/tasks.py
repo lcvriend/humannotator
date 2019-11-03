@@ -6,7 +6,6 @@ provides the task factory which can be used to conveniently create tasks.
 
 # local
 import re
-import textwrap
 from collections.abc import Mapping
 from datetime import datetime
 from warnings import warn
@@ -158,20 +157,18 @@ class Task(Base):
         return NotImplemented
 
     def __str__(self):
-        prefix = '   '
+        indent = f"\n{' ' * 16}"
         string = (
-            f"name: {self.name}\n"
-            f"kind: {self.kind}\n"
-            f"null: {self.nullable}\n"
+            f"{'name':<16}{self.name}\n"
+            f"{'kind':<16}{self.kind}\n"
+            f"{'null':<16}{self.nullable}\n"
         )
-        if self.instruction:
-            instr = self.instruction.strip('\n ')
-            instr = textwrap.indent(f'{instr}', prefix=prefix)
-            string += 'instruction:\n' + instr + '\n'
+        if self.instruction != '  \n':
+            instruction = self.instruction.strip('\n ').replace('\n', indent)
+            string += f"{'instruction':<16}{instruction}\n"
         if self.has_dependencies:
-            deps = '\n'.join(str(i) for i in self.dependencies)
-            deps = textwrap.indent(f"\n{deps}", prefix=prefix)
-            string += 'dependencies:' + deps + '\n'
+            dependencies = indent.join(str(i) for i in self.dependencies)
+            string += f"{'dependencies':<16}{dependencies}\n"
         return string
 
     def __repr__(self):
@@ -255,7 +252,7 @@ class Task_bool(Task):
             '1': 'True',
             '0': 'False',
         }
-        self.items = ''.join(option(i,c) for i, c in states.items())
+        self.items = ''.join(option(i,c) for i, c in states.items()).strip('\n')
 
     def __call__(self, value):
         value = super().__call__(value)
@@ -277,7 +274,9 @@ class Task_category(Task):
             categories = {str(i):c for i, c in enumerate(categories, start=1)}
         self.categories = categories
         self.dtype = CategoricalDtype(self.categories.values(), ordered=None)
-        self.items = ''.join(option(i,c) for i, c in categories.items())
+        self.items = ''.join(
+            option(i,c) for i, c in categories.items()
+        ).strip('\n')
         super().__init__(*args, **kwargs)
 
     @property
