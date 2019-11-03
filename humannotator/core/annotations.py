@@ -18,6 +18,21 @@ from humannotator.core.tasks import REGISTRY, task_factory, Task
 
 
 class Annotations(Base):
+    """
+    Annotations
+    ===========
+    Stores the tasks to be performed.
+    Collects the annotations from the user input.
+
+    Attributes
+    ----------
+    tasks : Tasks object
+    data : DataFrame
+        df for storing the annotations.
+        - Each task gets its own column.
+        - Timestamp and user are stored with each annotation.
+    """
+
     def __init__(self, tasks=None, dependencies=None):
         self.tasks = tasks
         self.data = self._build_data_structure()
@@ -110,14 +125,15 @@ class Tasks(Base):
     Class for storing tasks for annotation.
     - Tasks can be set and accessed through subscription.
     - Evaluates to False if no tasks are defined.
+    - Numbers the tasks in order (used in the display).
 
     Attributes
     ----------
-    tasks : dict of Tasks
+    tasks : dict of Task objects
         Dictionary containing all Task objects.
         - key: name of task
         - value: task
-    order : dict of Tasks
+    order : dict of Task objects
         Dictionary containing all Task objects.
         - key: index
         - value: task
