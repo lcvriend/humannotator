@@ -139,7 +139,7 @@ class Tasks(Base):
             if isinstance(tasks, Task):
                 tasks = [tasks]
             elif isinstance(tasks, pd.DataFrame):
-                tasks = self._extract_tasks_from_df(tasks)
+                tasks = self.extract_tasks_from_df(tasks)
 
             if isinstance(tasks, list):
                 assert all(isinstance(i, Task) for i in tasks)
@@ -221,10 +221,22 @@ class Tasks(Base):
 
     @classmethod
     def from_df(cls, df, instructions=None):
-        return cls(cls._extract_tasks_from_df(df, instructions=instructions))
+        return cls(cls.extract_tasks_from_df(df, instructions=instructions))
 
     @staticmethod
-    def _extract_tasks_from_df(df, instructions=None):
+    def extract_tasks_from_df(df, instructions=None):
+        """
+        Extract tasks from dataframe by inferring task kind from dtypes.
+        Instructions may be passed as a separate list.
+
+        Limitations:
+        - The str and regex tasks have the same dtype (object).
+        - When introducing NA the dtype may have been promoted.
+            This happens to boolean tasks that are nullable.
+            The incorrect inference will be made that the task is str.
+            See: https://pandas.pydata.org/pandas-docs/stable/user_guide/gotchas.html#na-type-promotions
+        """
+
         args = []
         instructions = pd.Series(instructions, index=df.columns)
         tasks = pd.concat([df.dtypes, instructions], axis=1)
