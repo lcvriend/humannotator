@@ -13,5 +13,5 @@ class Base(object):
 
 def option(character, instruction, newline=True):
     if newline:
-        return f"[{character}] - {instruction}  \n"
-    return f"[{character}] - {instruction}"
+        return f"[{character}] {instruction}  \n"
+    return f"[{character}] {instruction}"
