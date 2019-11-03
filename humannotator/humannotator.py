@@ -47,7 +47,7 @@ class Annotator(Base):
     annotated : DataFrame
         Annotation data.
     unannotated : list
-        List of indeces to unannotated records.
+        Indeces to the unannotated records.
     merged : DataFrame
         Table merging data and annotations.
     """
@@ -65,7 +65,7 @@ class Annotator(Base):
 
         arguments
         ---------
-        tasks : task, list of tasks or DataFrame
+        tasks : Task, list of Task objects, Tasks, Annotations or DataFrame
             Annotation task(s).
             If passed a DataFrame, then the tasks will be inferred from it.
             Annotation data in the dataframe will also be initialized.
@@ -203,7 +203,9 @@ class Annotator(Base):
 
     @annotations.setter
     def annotations(self, tasks):
-        if isinstance(tasks, pd.DataFrame):
+        if isinstance(tasks, Annotations):
+            self._annotations = tasks
+        elif isinstance(tasks, pd.DataFrame):
             self._annotations = Annotations.from_df(tasks)
         else:
             self._annotations = Annotations(tasks)
