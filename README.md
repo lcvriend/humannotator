@@ -65,7 +65,7 @@ Or use pip:
 
 In Jupyter this gives:
 
-<img src="/examples/popcorn_classics.png" alt="Humannotator" width="847">
+<img src="https://github.com/lcvriend/humannotator/blob/master/examples/popcorn_classics.png" alt="Humannotator" width="847">
 
 ### Annotate your data
 
