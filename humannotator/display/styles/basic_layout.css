@@ -17,7 +17,8 @@ div.humannotator__name {
     font-weight: 600;
     color: white;
 }
-div.humannotator__idx__counter {
+div.humannotator__idx__counter,
+div.humannotator__task__counter {
     justify-self: end;
 }
 div.humannotator__record {
@@ -39,25 +40,11 @@ div.humannotator__rule {
 div.humannotator__task {
     grid-area: task;
     display: grid;
-    grid-template-areas:
-        "task_name  task_count"
-        "task_instr task_instr"
-        "task_error task_error";
+    grid-template-columns: 1fr auto;
 }
-div.humannotator__task__name {
-    grid-area: task_name;
-}
-div.humannotator__task__counter {
-    grid-area: task_count;
-    justify-self: end;
-}
-div.humannotator__task__instruction {
-    grid-area: task_instr;
-}
+div.humannotator__task__instruction,
 div.humannotator__error {
-    grid-area: task_error;
-    font-style: italic;
-    color: darkred;
+    grid-column: 1 / 3;
 }
 div.humannotator__annotation {
     grid-area: anno;
@@ -104,6 +91,10 @@ div.humannotator__task {
 div.humannotator__task__name {
     font-size: 1.2em;
     margin-bottom: .25rem;
+}
+div.humannotator__error {
+    font-style: italic;
+    color: darkred;
 }
 .humannotator mark {
     padding: 1px 8px;
