@@ -43,27 +43,29 @@ Or use pip:
 
 ```Python
     import pandas as pd
-    from humannotator import Annotator, task_factory
+    from humannotator import Annotator
 
-    df = pd.read_csv('news.csv', index_col=0)
-    cols = ['title', 'date', 'news_id']
+    # load data
+    df = pd.read_csv('examples/popcorn_classics.csv', sep=';', index_col=0)
 
-    choices={
-        '0': 'not adverse media',
-        '1': 'adverse media',
-        '3': 'exclude from dataset',
-    }
-    instruct = "What is the topic in the title?"
-    task1 = task_factory(choices, 'Adverse media')
-    task2 = task_factory(
-        'str',
-        'Topic',
-        instruction=instruct,
-        nullable=True
-    )
+    # set up the annotator
+    ratings = [
+        'One bag',
+        'Two bags',
+        'Three bags',
+        'Four bags',
+        'Five-bagger',
+    ]
+    annotator = Annotator(df, name='VFA | Rate my popcorn classics')
+    annotator.tasks['Bags of popcorn'] = ratings
 
-    annotator = Annotator(df[cols], [task1, task2])
+    # run annotator
+    annotator(user='GT')
 ```
+
+In Jupyter this gives:
+
+![Humannotator](/examples/popcorn_classics.png)
 
 ### Annotate your data
 
@@ -74,9 +76,10 @@ Or use pip:
 
 ### Access your annotations
 
-- Access the annotations with the `annotated` attribute.
-- Return merged data and annotations with the `merged` method.
 - The annotations are conveniently stored in a pandas `DataFrame`.
+- Access the annotations with the `annotated` attribute.
+- Get the indeces of the records without annotation with `unannotated`.
+- Return the data merged with its annotations with the `merged` method.
 
 ### Store your annotations
 
@@ -88,24 +91,26 @@ Or use pip:
 The annotator accepts `list`, `dict`, `Series` and `DataFrame` objects as data.  
 The data will be converted to a dataframe internally.
 
-### dataframes
+### Dataframes
 
-- By default, the annotator will use its `index` and all `columns`.  
-- Use `load_data` to create a `data` object if you need more control:
+- By default, the annotator will use the dataframe's `index` and all `columns`.
+- Use `load_data` to easily create a `data` object if you need more control:
     1. `id_col` sets the column to be used as index.
     2. `item_cols` set the column or columns to be displayed.
 
 ## Define tasks
 
-Tasks are set up, using the `task_factory`.
-Create a task by passing it:
+Tasks can be set up through subscription or with the `task_factory`.
+
+### Setting up tasks with the task factory
+Create a task by passing `task_factory`:
 
 - the `kind` of task
 - the `name` of the task
 - (optionally) an `instruction`
 - (optionally) a list of `dependencies`
 - whether it is `nullable` (default is False)
-- any kwargs necessary
+- any [kwargs](#Available-tasks) necessary (depends on the kind of task)
 
 Typically: 
 ```Python
@@ -173,7 +178,7 @@ You can annotate a selection of records by passing a list of ids to the annotato
 
 > arguments
 > ---------
-> tasks : *task, list of task or DataFrame, default None*  
+> tasks : *Task, list of Task objects, Tasks, Annotations or DataFrame*
 >
 >     Annotation task(s).
 >     If passed a DataFrame, then the tasks will be inferred from it.
@@ -194,6 +199,7 @@ You can annotate a selection of records by passing a list of ids to the annotato
 > name : *str, default 'HUMANNOTATOR'*  
 >
 >     Name of the annotator.
+>
 > save_data : *boolean, default False*  
 >
 >     Set flag to True if you want to store the data with the annotator.
