@@ -177,7 +177,7 @@ class DisplayText(ProtoDisplay):
 
     def format_item(self, label, value):
         label  = normalize(label)
-        value  = self.truncate(self.highlight(value), label)
+        value  = self.truncate(self.highlight(normalize(value)), label)
         kwargs = dict(label=label, value=value)
         return self.Item(**kwargs)
 
