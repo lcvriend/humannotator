@@ -280,6 +280,6 @@ if __name__ == '__main__':
     )
 
     # run annotator
-    annotator = Annotator([task1, task2], data)
+    annotator = Annotator(data, [task1, task2])
     annotator(data.ids)
     print(annotator.annotated)
