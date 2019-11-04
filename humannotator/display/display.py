@@ -77,7 +77,7 @@ class ProtoDisplay(Base):
             ).render()
             self.task_context = {
                 'task_name':   task.name,
-                'instruction': task.instruction + self.navigation,
+                'instruction': task.instruction + '\n' + self.navigation,
                 'task_count':  'Task ' + task_counter,
                 'task_type':   f"({task.kind})",
                 'error':       error if error else '',
