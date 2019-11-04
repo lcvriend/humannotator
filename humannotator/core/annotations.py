@@ -232,8 +232,8 @@ class Tasks(Base):
             string += str(task) + '\n'
         return string
 
-    def __repr__(self):
-        return str(self)
+    def _repr_pretty_(self, p, cycle):
+        p.text(str(self))
 
     @classmethod
     def from_df(cls, df, instructions=None):

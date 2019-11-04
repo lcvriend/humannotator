@@ -157,22 +157,24 @@ class Task(Base):
         return NotImplemented
 
     def __str__(self):
-        indent = f"\n{' ' * 16}"
         string = (
             f"{'name':<16}{self.name}\n"
             f"{'kind':<16}{self.kind}\n"
             f"{'null':<16}{self.nullable}\n"
         )
         if self.instruction != '  \n':
+            indent = f"\n{' ' * 16}"
             instruction = self.instruction.strip('\n ').replace('\n', indent)
             string += f"{'instruction':<16}{instruction}\n"
         if self.has_dependencies:
+            indent = f",\n{' ' * 16}"
             dependencies = indent.join(str(i) for i in self.dependencies)
             string += f"{'dependencies':<16}{dependencies}\n"
         return string
 
-    def __repr__(self):
-        return str(self)
+    def _repr_pretty_(self, p, cycle):
+        p.text(str(self))
+
 
 @register
 class Task_str(Task):
@@ -404,3 +406,6 @@ class Dependency(Base):
 
     def __str__(self):
         return f'condition: "{self.condition}" | value: {self.value}'
+
+    def _repr_pretty_(self, p, cycle):
+        p.text(str(self))
