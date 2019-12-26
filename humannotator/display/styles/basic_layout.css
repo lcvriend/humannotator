@@ -66,8 +66,8 @@ div.humannotator__task,
 div.humannotator__annotation {
     padding: .25rem .5rem;
 }
-div.humannotator__grid_item {
-    align-self: center;
+div.humannotator__value {
+    overflow-y: scroll;
 }
 div.humannotator__label {
     font-size: .8em;
