@@ -259,3 +259,5 @@ You can annotate a selection of records by passing a list of ids to the annotato
 >
 >     The number of words beyond which an item will be truncated.
 >
+
+The module contains a [configuration file](humannotator/config.ini) in which some of the default behaviour of the humannotator can be configured.
