@@ -48,12 +48,20 @@ class ProtoDisplay(Base):
     Counter = element_factory(template_filename='_counter.txt')
     User    = element_factory(template_filename='_user.txt')
 
-    def __init__(self, annotator, interface, *args, **kwargs):
+    def __init__(
+        self,
+        annotator,
+        interface,
+        *args,
+        escape_html=False,
+        **kwargs
+    ):
         self.annotator = annotator
         self.interface = interface
         self.data = annotator._data
         self.highlight = Highlighter(self.Highlight, *args, **kwargs)
         self.navigation = interface.get_instruction()
+        self.escape_html = escape_html
 
     def __call__(self, id, task=None, error=None):
         self.layout_context = {
@@ -111,6 +119,12 @@ class ProtoDisplay(Base):
         else:
             os.system('cls||echo -e \\\\033c')
 
+    def format_value(self, value):
+        value = normalize(value)
+        if self.escape_html:
+            value = html.escape(value)
+        return value
+
 
 class DisplayJupyter(ProtoDisplay):
     Layout    = element_factory(template_filename='basic_layout.html')
@@ -138,7 +152,8 @@ class DisplayJupyter(ProtoDisplay):
 
     def format_item(self, label, value):
         label  = normalize(label)
-        value  = self.highlight(self.truncate(html.escape(normalize(value))))
+        value  = self.format_value(value)
+        value  = self.highlight(self.truncate(value))
         kwargs = dict(label=label, value=value)
         return self.Item(**kwargs)
 
@@ -177,7 +192,8 @@ class DisplayText(ProtoDisplay):
 
     def format_item(self, label, value):
         label  = normalize(label)
-        value  = self.truncate(self.highlight(normalize(value)), label)
+        value  = self.format_value(value)
+        value  = self.truncate(self.highlight(value), label)
         kwargs = dict(label=label, value=value)
         return self.Item(**kwargs)
 

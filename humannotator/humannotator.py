@@ -88,6 +88,8 @@ class Annotator(Base):
         DISPLAY
         text_display : boolean, default None
             If True will display the annotator in plain text instead of html.
+        escape_html : boolean, default False
+            If true will escape html content within items.
 
         DATA
         item_cols : str or list of str, default None
