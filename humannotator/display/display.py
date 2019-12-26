@@ -133,9 +133,14 @@ class DisplayJupyter(ProtoDisplay):
     Item      = element_factory(template_filename='_item.html')
     Highlight = element_factory(template_filename='_highlight.html')
 
-    def __init__(self, *args, maxheight=COMPONENTS.maxheight, **kwargs):
+    def __init__(
+        self,
+        *args,
+        maxheight_items=COMPONENTS.maxheight_items,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
-        self.maxheight = str(maxheight)
+        self.maxheight_items = str(maxheight_items)
         self.truncate = TruncaterJupyter(**kwargs)
 
     def __call__(self, id, *args, **kwargs):
@@ -156,7 +161,7 @@ class DisplayJupyter(ProtoDisplay):
         label  = normalize(label)
         value  = self.format_value(value)
         value  = self.highlight(self.truncate(value))
-        kwargs = dict(label=label, value=value, maxheight=self.maxheight)
+        kwargs = dict(label=label, value=value, maxheight=self.maxheight_items)
         return self.Item(**kwargs)
 
 

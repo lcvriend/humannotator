@@ -11,6 +11,7 @@ import pickle
 import pandas as pd
 
 # local
+from humannotator.config import COMPONENTS
 from humannotator.utils import Base
 from humannotator.interface import Interface
 from humannotator.core.annotations import Annotations
@@ -61,7 +62,7 @@ class Annotator(Base):
         save_data=False,
         **kwargs
     ):
-        """Create an annotator.
+        f"""Create an annotator.
 
         arguments
         ---------
@@ -88,8 +89,13 @@ class Annotator(Base):
         DISPLAY
         text_display : boolean, default None
             If True will display the annotator in plain text instead of html.
-        escape_html : boolean, default False
+
+        HTML
+        escape_html : boolean, default {COMPONENTS.escape_html}
             If true will escape html content within items.
+        maxheight : str, default '{COMPONENTS.maxheight_items}'
+            Max height before item gets y-scroll bar.
+            Set to None to have no maximum.
 
         DATA
         item_cols : str or list of str, default None
@@ -112,9 +118,9 @@ class Annotator(Base):
             Flags to pass through to the re module, e.g. re.IGNORECASE.
 
         TRUNCATER
-        truncate : boolean, default True
+        truncate : boolean, default {COMPONENTS.truncate}
             Set to False to not truncate items.
-        trunc_limit : int,
+        trunc_limit : int, default {COMPONENTS.truncate_word_limit}
             The number of words beyond which an item will be truncated.
 
         returns
