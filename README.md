@@ -211,7 +211,17 @@ You can annotate a selection of records by passing a list of ids to the annotato
 > text_display : *boolean, default None*  
 >
 >     If True will display the annotator in plain text instead of html.
-> 
+>
+> **HTML**  
+> escape_html : *boolean, default {escape_html}*
+>
+>     If true will escape html content within items.
+>
+> maxheight : *str, default '{maxheight_items}'*
+>
+>     Max height before item gets y-scroll bar.
+>     Set to None to have no maximum.
+>
 > **DATA**  
 > item_cols : *str or list of str, default None*  
 >
@@ -241,11 +251,11 @@ You can annotate a selection of records by passing a list of ids to the annotato
 >     Flags to pass through to the re module, e.g. re.IGNORECASE.
 > 
 > **TRUNCATER**  
-> truncate : *boolean, default True*  
+> truncate : *boolean, default {truncate}*  
 >
 >     Set to False to not truncate items.
 >
-> trunc_limit : *int, default 32*  
+> trunc_limit : *int, default {truncate_word_limit}*  
 >
 >     The number of words beyond which an item will be truncated.
 >
