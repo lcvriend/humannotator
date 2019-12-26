@@ -12,7 +12,7 @@ import pandas as pd
 
 # local
 from humannotator.config import COMPONENTS
-from humannotator.utils import Base
+from humannotator.utils import Base, docstring_parameter
 from humannotator.interface import Interface
 from humannotator.core.annotations import Annotations
 from humannotator.core.data import Data, load_data
@@ -53,6 +53,7 @@ class Annotator(Base):
         Table merging data and annotations.
     """
 
+    @docstring_parameter(**COMPONENTS._asdict())
     def __init__(
         self,
         data=None,
@@ -62,7 +63,7 @@ class Annotator(Base):
         save_data=False,
         **kwargs
     ):
-        f"""Create an annotator.
+        """Create an annotator.
 
         arguments
         ---------
@@ -91,9 +92,9 @@ class Annotator(Base):
             If True will display the annotator in plain text instead of html.
 
         HTML
-        escape_html : boolean, default {COMPONENTS.escape_html}
+        escape_html : boolean, default {escape_html}
             If true will escape html content within items.
-        maxheight : str, default '{COMPONENTS.maxheight_items}'
+        maxheight : str, default '{maxheight_items}'
             Max height before item gets y-scroll bar.
             Set to None to have no maximum.
 
@@ -118,9 +119,9 @@ class Annotator(Base):
             Flags to pass through to the re module, e.g. re.IGNORECASE.
 
         TRUNCATER
-        truncate : boolean, default {COMPONENTS.truncate}
+        truncate : boolean, default {truncate}
             Set to False to not truncate items.
-        trunc_limit : int, default {COMPONENTS.truncate_word_limit}
+        trunc_limit : int, default {truncate_word_limit}
             The number of words beyond which an item will be truncated.
 
         returns
@@ -220,6 +221,7 @@ class Annotator(Base):
 
     @property
     def tasks(self):
+        "Task definitions."
         return self.annotations.tasks
 
     @tasks.setter

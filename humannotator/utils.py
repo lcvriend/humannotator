@@ -15,3 +15,10 @@ def option(character, instruction, newline=True):
     if newline:
         return f"[{character}] {instruction}  \n"
     return f"[{character}] {instruction}"
+
+
+def docstring_parameter(*args, **kwargs):
+    def dec(obj):
+        obj.__doc__ = obj.__doc__.format(*args, **kwargs)
+        return obj
+    return dec
