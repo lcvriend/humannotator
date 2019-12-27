@@ -136,10 +136,14 @@ class DisplayJupyter(ProtoDisplay):
     def __init__(
         self,
         *args,
+        markdown=COMPONENTS.markdown,
+        markdown_extensions=COMPONENTS.markdown_extensions,
         maxheight_items=COMPONENTS.maxheight_items,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
+        self.markdown = markdown
+        self.markdown_extensions = markdown_extensions
         self.maxheight_items = str(maxheight_items)
         self.truncate = TruncaterJupyter(**kwargs)
 
@@ -158,9 +162,11 @@ class DisplayJupyter(ProtoDisplay):
         display(HTML(layout.render()))
 
     def format_item(self, label, value):
-        label  = normalize(label)
-        value  = self.format_value(value)
-        value  = self.highlight(self.truncate(value))
+        label = normalize(label)
+        value = self.format_value(value)
+        if self.markdown:
+            value = markdown(value, extensions=self.markdown_extensions)
+        value = self.highlight(self.truncate(value))
         kwargs = dict(label=label, value=value, maxheight=self.maxheight_items)
         return self.Item(**kwargs)
 

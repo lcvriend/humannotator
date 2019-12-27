@@ -163,8 +163,8 @@ class Highlighter(Base):
             self._phrases = phrases
 
 
-def normalize(value):
+def normalize(value, form='NFKC'):
     value = str(value)
     if JUPYTER:
         value = value.replace('$', '\$')
-    return unicodedata.normalize('NFKC', value)
+    return unicodedata.normalize(form, value)

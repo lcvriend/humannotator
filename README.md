@@ -213,6 +213,15 @@ You can annotate a selection of records by passing a list of ids to the annotato
 >     If True will display the annotator in plain text instead of html.
 >
 > **HTML**  
+>
+> markdown : *boolean, default {markdown}*
+>
+>      If True will pass values through markdown before rendering.
+>
+> markdown_extensions : *list, default {markdown_extensions}*
+>
+>      List of markdown extensions to apply.
+>
 > escape_html : *boolean, default {escape_html}*
 >
 >     If true will escape html content within items.
