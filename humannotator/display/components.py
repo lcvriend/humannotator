@@ -73,7 +73,7 @@ class AnnotationDisplayJupyter(AnnotationDisplay):
             return ''
 
     def format_item(self, label, value):
-        return self.Item(label=label, value=value)
+        return self.Item(label=label, value=value, maxheight=None)
 
 
 class Truncater(Base):
