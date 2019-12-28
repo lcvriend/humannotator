@@ -59,14 +59,10 @@ class TaskCategoryTestCase(unittest.TestCase):
             ['x', 'y' ,'z']
         )
 
-    def test_instruction(self):
+    def test_instruction_items(self):
         categories = zip('1 2 3'.split(), 'x y z'.split())
-        instruction = (
-            '  \n' +
-            ''.join(option(i, c) for i, c in categories) +
-            '  \n'
-        )
-        self.assertEqual(instruction, self.task.instruction)
+        items = ''.join(option(i, c) for i, c in categories).strip('\n')
+        self.assertEqual(items, self.task.items)
 
     def test_equality_with_task_from_iterable(self):
         task = task_factory(['x', 'y', 'z'], 'a')
