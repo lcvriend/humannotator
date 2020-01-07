@@ -6,3 +6,4 @@ notebooks/
 build/
 dist/
 *.egg-info/
+build_conda.sh
